@@ -1,0 +1,12 @@
+* text eol=lf
+
+# binary files that git must not modified
+*.db binary
+*.doc binary
+*.docx binary
+*.jpg binary
+*.odt binary
+*.pdf binary
+*.png binary
+*.psd binary
+*.sqlite binary

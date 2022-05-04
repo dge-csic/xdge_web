@@ -1,15 +1,14 @@
 <?php
 // shared libraries
-include 'xdge.php';
+include __DIR__ . '/Xdge.php';
+$lib = ""; // where to find res
 // requested word
-$lemma=Web::pathinfo();
+$lemma = Web::pathinfo();
 // Get user-agent, frames for human browsers, full content for others.
-$browser=Web::browser();
+$browser = Web::browser();
 if (isset($_REQUEST['bot'])) $browser=array();
 // persistent parameter for the pannel view, cookie is set onclick by javascript
 $tab=Web::param("tab", "indicar", 3600);
-// persistent
-
 
 ?><!DOCTYPE html>
 <html>
@@ -21,18 +20,15 @@ $tab=Web::param("tab", "indicar", 3600);
 // TODO implement prev/next on all words
 
 ?>
-    <link rel="stylesheet" href="<?php echo xdge::$libHref; ?>dge.css"/>
-    <!--[if lt IE 9]>
-      <script src="<?php echo xdge::$libHref; ?>html5shiv.js">//</script>
-    <![endif]-->
-    <script type="text/javascript" src="<?php echo xdge::$libHref; ?>json/lat_grc.json">//</script>
-    <script type="text/javascript" src="<?php echo xdge::$libHref; ?>dge.js">//</script>
-    <script type="text/javascript" src="<?php echo Web::pathBase(); ?>xdge.js">//</script>
+    <link rel="stylesheet" href="theme/dge.css"/>
+    <script type="text/javascript" src="<?= $lib ?>json/lat_grc.json">//</script>
+    <script type="text/javascript" src="<?= $lib ?>theme/dge.js">//</script>
+    <script type="text/javascript" src="<?= $lib ?>theme/xdge.js">//</script>
   </head>
   <?php flush(); ?>
   <body class="xdge">
     <header id="header">
-      <a href="http://dge.cchs.csic.es/" id="DGE"><img src="<?php echo xdge::$libHref; ?>img/dge_64.png"/></a>
+      <a href="http://dge.cchs.csic.es/" id="DGE"><img src="<?= $lib ?>theme/dge_64.png"/></a>
       <div class="grad">
       <div class="tabs">
        <a href="http://dge.cchs.csic.es/lst/lst-int.htm" target="_new" title="Listas de ediciones de referencia y de abreviaturas empleadas en el DGE">Listas</a>
@@ -43,7 +39,7 @@ $tab=Web::param("tab", "indicar", 3600);
     <article id="article">
       <?php
 // If not a human browser, no frame, hsould we use js instead?
-if (count($browser) == 0) echo xdge::article($lemma);
+if (count($browser) == 0) echo Xdge::article($lemma);
 else {
   echo '<iframe name="article" width="100%" height="100%" frameborder="0" src="'; 
   if($lemma ) { // $lemma==1 when nothing found on some servers, strange
@@ -114,8 +110,8 @@ Ici nous sommes dans un contexte de frame, il faut faire comme pour creditos, un
     </aside>
     <div id="footer">
       <a href="#" onmouseover="this.href='ma'+'ilto'+'\x3A'+'dge'+'\x40'+'cchs.csic.es'">Proyecto DGE (contacto)</a>  - <a target="article" href="doc/licencia.html">Licencia</a>  - <a target="_blank" href="http://www.csic.es/">CSIC</a>
-      <a href="http://algone.net/" title="Made by Algone"  target="_new"><img align="right" alt="Algone" src="<?php echo xdge::$libHref; ?>img/algone.png"/></a>
-      <a href="xml/" title="&lt;TEI&gt xml source"  target="_new"><img align="right" alt="&lt;TEI&gt" src="<?php echo xdge::$libHref; ?>img/tei.png"/></a>
+
+      <a href="https://github.com/dge-csic/xdge" title="&lt;TEI&gt xml source"  target="_new"><img alt="&lt;TEI&gt" src="<?= $theme ?>img/tei.png"/></a>
     </div>
   </body>
 </html>

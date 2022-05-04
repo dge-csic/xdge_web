@@ -1,0 +1,4 @@
+*.db
+pars.php
+sitemap.xml
+*.db-*

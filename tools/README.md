@@ -1,0 +1,1 @@
+All resources to create an SQLITE database of xdge XML/TEI files.
