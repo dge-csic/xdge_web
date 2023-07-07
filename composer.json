@@ -1,0 +1,20 @@
+{
+    "name": "dge-csic/teinte_galenus",
+    "description": "Convert OCR files",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Sabine Thuillier",
+            "role": "Lead"
+        },
+        {
+            "name": "Frédéric Glorieux",
+            "email": "frederic.glorieux@fictif.org",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "oeuvres/kit": "dev-main"
+    },
+    "minimum-stability": "dev"
+}
