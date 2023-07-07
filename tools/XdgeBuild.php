@@ -1,9 +1,10 @@
 <?php // encoding="UTF-8"
 
-/*
-Global pilot of xdge app
-*/
+/**
+ * Global pilot of xdge app
+ */
 XdgeBuild::init();
+
 class XdgeBuild
 {
     /** Global parameters for the app */
@@ -31,19 +32,6 @@ class XdgeBuild
     /** constructor */
     static function init()
     {
-        $pars_file = dirname(__DIR__) . "/pars.php";
-        if (!file_exists($pars_file)) {
-            throw new Exception("Parameters not found, expected in: ".$pars_file);
-        }
-        self::$p = include($pars_file);
-        // load transliteration tables
-        $dir = dirname(__DIR__) . '/json/';
-        self::$grc_tr = json_decode(file_get_contents($dir . 'grc.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$lat_tr = json_decode(file_get_contents($dir . 'lat.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$grc_lat_tr = json_decode(file_get_contents($dir . 'grc_lat.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$lat_grc_tr = json_decode(file_get_contents($dir . 'lat_grc.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$orth_tr =json_decode(file_get_contents($dir . 'orth.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$el_grc_tr = json_decode(file_get_contents($dir . 'el_grc.json'), true, 512, JSON_THROW_ON_ERROR);
 
         // create new database
         $db_file = self::$p['xdge_db'];
@@ -91,6 +79,17 @@ class XdgeBuild
         // optimize
         self::$pdo->exec("INSERT INTO  search(search) VALUES ('optimize'); -- optimize fulltext index");
     }
+    /**
+     * Normalize a greek form to lower with no accents
+     */
+    static public function monoton($form)
+    {
+        $form = Normalizer::normalize($form, Normalizer::FORM_D);
+        $form = preg_replace( '@\pM@u', "", $form);
+        $form = mb_strtolower($form);
+        return $form;
+    }
+
     /** Insert an entry, method is called by xsl transformation */
     static function entry($id, $lemma, $label, $html, $text)
     {

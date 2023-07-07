@@ -1,14 +1,19 @@
 <?php
 // shared libraries
 include __DIR__ . '/Xdge.php';
-$lib = ""; // where to find res
+
+use Oeuvres\Kit\{Web};
+
+$lib = ""; // where to find resources
+$basehref = Web::basehref();
+
 // requested word
 $lemma = Web::pathinfo();
 // Get user-agent, frames for human browsers, full content for others.
 $browser = Web::browser();
 if (isset($_REQUEST['bot'])) $browser=array();
 // persistent parameter for the pannel view, cookie is set onclick by javascript
-$tab=Web::param("tab", "indicar", 3600);
+$tab=Web::par("tab", "indicar", 3600);
 
 ?><!DOCTYPE html>
 <html>
@@ -44,14 +49,14 @@ else {
   echo '<iframe name="article" width="100%" height="100%" frameborder="0" src="'; 
   if($lemma ) { // $lemma==1 when nothing found on some servers, strange
     // TODO here 
-    echo Web::pathBase(),'article/',$lemma;
+    echo $basehref,'article/',$lemma;
     // if (isset($_REQUEST['mark'])) echo '?mark=',$_REQUEST['mark']);
   }
   else if (Web::pathinfo() == '') {
-    echo Web::pathBase(),'doc/presentacion';
+    echo $basehref,'doc/presentacion';
   }
   else {
-    echo Web::pathBase(),'doc/404';
+    echo $basehref,'doc/404';
   }
   echo '"> </iframe>';
   // TODO, lien vers DGE…
@@ -67,12 +72,12 @@ else {
         <div class="tabs">
 <?php
 echo '<a title="Lista alfabética de los lemas" id="indicar" ';
-echo ' href="',Web::pathBase(),'indicar/',$lemma,'" target="suggest" onclick="return tab(this);"';
+echo ' href="', $basehref ,'indicar/',$lemma,'" target="suggest" onclick="return tab(this);"';
 if ($tab=="indicar") echo ' class="active"';
 echo '>Lemas</a>';
 
 echo '<a title="Lista de los lemas ordenados por su terminación" id="inverso" ';
-echo ' href="',Web::pathBase(),'inverso/',$lemma,'" target="suggest" onclick="return tab(this);"';
+echo ' href="', $basehref ,'inverso/',$lemma,'" target="suggest" onclick="return tab(this);"';
 if ($tab=="inverso") echo ' class="active"';
 echo'>Inverso</a>';
 
@@ -95,7 +100,7 @@ echo '<script type="text/javascript">var toFoc=document.getElementById("q"); if(
       </div>
       <div id="nav">
 <?php
-echo '<iframe width="100%" height="100%" frameborder="0" id="suggest" name="suggest" src="',Web::pathBase();
+echo '<iframe width="100%" height="100%" frameborder="0" id="suggest" name="suggest" src="', $basehref;
 if ($tab=="inverso") echo 'inverso/';
 else echo 'indicar/';
 echo $lemma,'"> </iframe>';

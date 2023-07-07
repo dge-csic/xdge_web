@@ -52,7 +52,7 @@
     </xsl:variable>
     <xsl:copy-of select="$txt"/>
     <xsl:if test="function-available('php:function')">
-      <xsl:variable name="entry" select="php:function('XdgeBuild::entry', string(@xml:id), string($lemma),  exslt:node-set($label) , exslt:node-set($html), exslt:node-set($txt))"/>
+      <xsl:variable name="entry" select="php:function('xdge::entry', string(@xml:id), string($lemma),  exslt:node-set($label) , exslt:node-set($html), exslt:node-set($txt))"/>
     </xsl:if>
     <!-- for now, no subpart indexed 
     <xsl:apply-templates mode="sql"/>

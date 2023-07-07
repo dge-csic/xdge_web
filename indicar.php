@@ -15,7 +15,7 @@ use Oeuvres\Kit\{Web};
 Web::notModified(Xdge::$p['xdge_db']);
 
 $lib = ""; // where to find resources
-if (!isset($inverso))$inverso=false;
+if (!isset($inverso)) $inverso=false;
 
 
 // persistent number of lemmas in column, before and after the selected index

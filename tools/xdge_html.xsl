@@ -9,23 +9,23 @@ Transform XDGE in html.
 </ul>
 
 -->
-<xsl:transform version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns="http://www.w3.org/1999/xhtml" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  exclude-result-prefixes="tei" xmlns:exslt="http://exslt.org/common" xmlns:php="http://php.net/xsl"
-  xmlns:date="http://exslt.org/dates-and-times" extension-element-prefixes="exslt php date">
+<xsl:transform exclude-result-prefixes="tei" extension-element-prefixes="exslt php date" version="1.1" xmlns="http://www.w3.org/1999/xhtml" xmlns:date="http://exslt.org/dates-and-times" xmlns:exslt="http://exslt.org/common" xmlns:php="http://php.net/xsl" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <!-- do not strip spaces -->
+  <xsl:output encoding="UTF-8" indent="yes" method="xml" omit-xml-declaration="yes"/>
   <!-- shared templates -->
   <xsl:param name="this">xdge_html.xsl</xsl:param>
   <!-- for direct transformation to get a relative link to css  -->
-  <xsl:param name="context">../../</xsl:param>
   <!-- Generated date -->
   <xsl:param name="date">
     <xsl:choose>
       <xsl:when test="function-available('date:date')">
         <xsl:value-of select="date:date()"/>
       </xsl:when>
-      <xsl:otherwise>2011</xsl:otherwise>
+      <xsl:otherwise>2022</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
+  <!-- folder for theme -->
+  <xsl:param name="theme">theme/</xsl:param>
   <!-- Share the same html prolog -->
   <xsl:template name="prolog">
     <xsl:text disable-output-escaping="yes"><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
@@ -48,18 +48,15 @@ Transform XDGE in html.
       <head>
         <meta charset="UTF-8"/>
         <title>XDGE</title>
-        <xsl:call-template name="head"/>
+        <link href="{$theme}xdge_html.css" rel="stylesheet"/>
       </head>
       <body class="article">
         <xsl:apply-templates/>
       </body>
     </html>
   </xsl:template>
-  <!-- Shared head content in files -->
-  <xsl:template name="head">
-    <xsl:param name="context" select="$context"/>
-    <link rel="stylesheet" href="{$context}lib/dge.css"/>
-  </xsl:template>
+  <!-- Nothing done with that for now -->
+  <xsl:template match="tei:lcStart | tei:lcEnd | tei:llccStart | tei:llccEnd | tei:addStart | tei:addEnd | tei:delStart | tei:delEnd  "/>
   <!-- Header, one day -->
   <xsl:template match="tei:teiHeader"/>
   <!-- Cross -->
@@ -67,43 +64,105 @@ Transform XDGE in html.
     <xsl:apply-templates/>
   </xsl:template>
   <!-- Article -->
+  <xsl:template name="prevnext">
+    <xsl:text>&#10;        </xsl:text>
+    <nav class="prevnext">
+      <xsl:text>&#10;          </xsl:text>
+      <xsl:for-each select="preceding-sibling::tei:entry[1]">
+        <a class="prev">
+          <xsl:attribute name="href">
+            <xsl:call-template name="id"/>
+          </xsl:attribute>
+          <xsl:text>◀ </xsl:text>
+          <xsl:value-of select="tei:form/tei:orth"/>
+        </a>
+        <xsl:text> </xsl:text>
+      </xsl:for-each>
+      <xsl:text>&#10;          </xsl:text>
+      <xsl:for-each select="following-sibling::tei:entry[1]">
+        <a class="next">
+          <xsl:attribute name="href">
+            <xsl:call-template name="id"/>
+          </xsl:attribute>
+          <xsl:value-of select="tei:form/tei:orth"/>
+          <xsl:text> ▶</xsl:text>
+        </a>
+      </xsl:for-each>
+      <xsl:text>&#10;        </xsl:text>
+    </nav>
+    <xsl:text>&#10;        </xsl:text>
+  </xsl:template>
   <xsl:template match="tei:entry">
-    <article class="entry">
+    <article class="entry {@type}">
       <xsl:attribute name="id">
         <xsl:call-template name="id"/>
       </xsl:attribute>
-      <nav class="prevnext">
-       <xsl:text> </xsl:text>
-        <xsl:for-each select="preceding-sibling::tei:entry[1]">
-          <a class="prev">
-            <xsl:attribute name="href">
-              <xsl:call-template name="id"/>
-            </xsl:attribute>
-            <xsl:text>&lt; </xsl:text>
-            <xsl:value-of select="tei:form/tei:orth"/>
-          </a>
-          <xsl:text> </xsl:text>
-        </xsl:for-each>
-        <xsl:for-each select="following-sibling::tei:entry[1]">
-          <xsl:text> </xsl:text>
-          <a class="next">
-            <xsl:attribute name="href">
-              <xsl:call-template name="id"/>
-            </xsl:attribute>
-            <xsl:value-of select="tei:form/tei:orth"/>
-            <xsl:text> &gt;</xsl:text>
-          </a>
-          <xsl:text> </xsl:text>
-        </xsl:for-each>
-      </nav>
-      <xsl:apply-templates select="node()[not(self::tei:xr)][not(self::tei:etym)][not(self::tei:bibl)]"/>
-      <xsl:if test="tei:bibl[@type='dmic'] | tei:etym">
+      <xsl:call-template name="prevnext"/>
+      <xsl:apply-templates select="tei:form"/>
+      <div class="row">
+        <div class="body">
+          <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:etym)][not(self::tei:bibl)]"/>
+        </div>
+        <nav class="entry-nav">
+          <xsl:if test="tei:sense[tei:num]">
+            <ul>
+              <xsl:apply-templates mode="toc" select="tei:sense[tei:num]"/>
+            </ul>
+          </xsl:if>
+        </nav>
+      </div>
+      <xsl:if test="tei:bibl | tei:etym">
         <footer>
-          <xsl:apply-templates select="tei:bibl[@type='dmic'] | tei:etym"/>
+          <xsl:apply-templates select="tei:bibl | tei:etym"/>
         </footer>
       </xsl:if>
-      <xsl:apply-templates select="tei:xr"/>
     </article>
+  </xsl:template>
+  <!-- -->
+  <xsl:template match="tei:sense" mode="toc">
+    <li class="sense">
+      <a>
+        <xsl:attribute name="href">
+          <xsl:text>#</xsl:text>
+          <xsl:call-template name="id"/>
+        </xsl:attribute>
+        <xsl:if test="@rend='num'">
+          <xsl:value-of select="tei:num"/>
+          <xsl:variable name="clast" select="substring(normalize-space(tei:num), string-length(normalize-space(tei:num)))"/>
+          <xsl:if test="not(contains(').—', $clast))">.</xsl:if>
+        </xsl:if>
+        <xsl:variable name="text">
+          <xsl:variable name="raw">
+            <xsl:for-each select="node()[not(self::tei:num)][not(self::tei:cit)][not(self::tei:sense)][not(self::tei:bibl)]">
+              <xsl:choose>
+                <xsl:when test="translate(normalize-space(.), ',.; ', '') = ''"/>
+                <xsl:otherwise>
+                  <xsl:value-of select="."/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each>
+          </xsl:variable>
+          <xsl:value-of select="normalize-space($raw)"/>
+        </xsl:variable>
+        <xsl:variable name="len" select="string-length($text)"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="substring($text, 1, $len - 1)"/>
+        <xsl:variable name="last" select="substring($text, $len)"/>
+        <xsl:choose>
+          <!-- Strip ending commas -->
+          <xsl:when test="translate($last, ',;:', '') = ''"/>
+          <xsl:otherwise>
+            <xsl:value-of select="$last"/>
+          </xsl:otherwise>
+        </xsl:choose>
+        
+      </a>
+      <xsl:if test="tei:sense[tei:num]">
+        <ul>
+          <xsl:apply-templates mode="toc" select="tei:sense[tei:num]"/>
+        </ul>
+      </xsl:if>
+    </li>
   </xsl:template>
   <!-- Sense -->
   <xsl:template match="tei:sense">
@@ -116,45 +175,42 @@ Transform XDGE in html.
   </xsl:template>
   <!-- Entry head -->
   <xsl:template match="tei:entry / tei:form">
-    <header class="form">
-      <xsl:apply-templates select="node()[not(self::tei:form)]"/>
-      <xsl:choose>
-        <xsl:when test="tei:form">
-          <div class="form">
-            <xsl:apply-templates select="tei:form"/>
-          </div>
-        </xsl:when>
-      </xsl:choose>
+    <header>
+      <div class="form form1">
+        <xsl:for-each select="*[not(self::tei:form)]">
+          <xsl:choose>
+            <xsl:when test="position() != 1">
+              <xsl:text>, </xsl:text>
+            </xsl:when>
+          </xsl:choose>
+          <xsl:apply-templates select="."/>
+        </xsl:for-each>
+      </div>
+      <xsl:text>&#10;          </xsl:text>
+      <xsl:apply-templates select="tei:form"/>
     </header>
-    <!-- 
-      <a href="#" onclick="return butCit(this)" title="ocultar / mostrar las citas" class="but">–/+</a>
-    -->
   </xsl:template>
   <!-- Grammatical information, with a comma before (but not a new line, the reason of xsl:text)  -->
   <xsl:template match="tei:form / tei:gramGrp">
-    <xsl:text>, </xsl:text>
-    <span class="gram">
+    <span class="gramGrp">
       <xsl:apply-templates/>
     </span>
   </xsl:template>
-
   <!-- Headword -->
-  <xsl:template match="tei:orth[@type !='latin']">
-    <strong class="{@type} grc">
+  <xsl:template match="tei:orth">
+    <xsl:variable name="element">
+      <xsl:choose>
+        <xsl:when test="@type ='lemma'">strong</xsl:when>
+        <xsl:when test="@type ='latin'">em</xsl:when>
+        <xsl:otherwise>span</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:element name="{$element}">
+      <xsl:attribute name="class">
+        <xsl:value-of select="normalize-space(concat('orth ', @lang, ' ', @type))"/>
+      </xsl:attribute>
       <xsl:apply-templates/>
-    </strong>
-  </xsl:template>
-  <!-- Other principal headers -->
-  <xsl:template match="tei:orth[@type ='lemma'][position() !=1]">
-    <strong class="lemma2 grc">
-      <xsl:apply-templates/>
-    </strong>
-  </xsl:template>
-  <!-- Latin alolemas in italic not bold -->
-  <xsl:template match="tei:orth[@type ='latin']">
-    <em class="{@type}">
-      <xsl:apply-templates/>
-    </em>
+    </xsl:element>
   </xsl:template>
   <!-- Numérotation -->
   <xsl:template match="tei:num">
@@ -165,9 +221,9 @@ Transform XDGE in html.
       </xsl:when>
       <!-- pour les niveaux supérieurs sans contenu, type "A I", ne pas sauter de ligne avant le num enfant -->
       <xsl:when test="@type">
-          <b class="num start">
-            <xsl:apply-templates/>
-          </b>    
+        <b class="num start">
+          <xsl:apply-templates/>
+        </b>
       </xsl:when>
       <xsl:otherwise>
         <b class="num">
@@ -203,13 +259,13 @@ Transform XDGE in html.
   </xsl:template>
   <xsl:template match="tei:ref">
     <a>
-        <xsl:choose>
-          <xsl:when test="@target">
-            <xsl:attribute name="href">
-              <xsl:value-of select="@target"/>
-            </xsl:attribute>
-          </xsl:when>
-        </xsl:choose>
+      <xsl:choose>
+        <xsl:when test="@target">
+          <xsl:attribute name="href">
+            <xsl:value-of select="@target"/>
+          </xsl:attribute>
+        </xsl:when>
+      </xsl:choose>
       <xsl:apply-templates/>
     </a>
   </xsl:template>
@@ -235,12 +291,12 @@ Transform XDGE in html.
   </xsl:template>
   <!-- Translation of lemmas -->
   <xsl:template match="tei:def">
-    <dfn>
+    <dfn class="def">
       <xsl:apply-templates/>
     </dfn>
   </xsl:template>
   <!-- Translation (not used in dge, only in lmpg). -->
-   <!-- <xsl:template match="tei:gloss">
+  <!-- <xsl:template match="tei:gloss">
     <dfn>
       <xsl:apply-templates/>
     </dfn>
@@ -257,26 +313,30 @@ Transform XDGE in html.
   <xsl:template match="tei:cit">
     <!-- Temporaire, .cit display:inline 
     <br/>-->
-    <span class="{local-name()}">
+    <div class="{local-name()}">
       <xsl:attribute name="id">
         <xsl:call-template name="id"/>
       </xsl:attribute>
       <xsl:apply-templates/>
+    </div>
+  </xsl:template>
+  <!-- Not used for the moment in dge -->
+  <xsl:template match="tei:lbl">
+    <span class="{local-name}">
+      <xsl:apply-templates/>
     </span>
   </xsl:template>
-  <!-- Not used for the moment in dge
-  <xsl:template match="tei:lbl">
-    <xsl:text> </xsl:text>
-    <xsl:apply-templates/>
-    <xsl:text> </xsl:text>
-  </xsl:template>
-  -->
   <!-- Greek context quoted -->
-  <xsl:template match="tei:quote[@xml:lang='grc']">
-    <q class="grc">
+  <xsl:template match="tei:quote">
+    <q>
       <xsl:attribute name="class">
-        <xsl:value-of select="@xml:lang"/>
+        <xsl:value-of select="normalize-space(concat('quote ', @xml:lang))"/>
       </xsl:attribute>
+      <xsl:if test="@xml:lang">
+        <xsl:attribute name="lang">
+          <xsl:value-of select="@xml:lang"/>
+        </xsl:attribute>
+      </xsl:if>
       <xsl:apply-templates/>
     </q>
   </xsl:template>
@@ -285,13 +345,6 @@ Transform XDGE in html.
     <label class="usg">
       <xsl:apply-templates/>
     </label>
-  </xsl:template>
-  <!-- Translation of greek context quoted -->
-  <xsl:template match="tei:quote">
-    <em class="tr">
-      <xsl:text> </xsl:text>
-      <xsl:apply-templates/>
-    </em>
   </xsl:template>
   <!-- foreign word -->
   <xsl:template match="tei:foreign">
@@ -307,15 +360,14 @@ Transform XDGE in html.
   </xsl:template>
   <!-- italic -->
   <xsl:template match="tei:hi[substring(@rend, 1, 1)='i']">
-    <em>
+    <i>
       <xsl:apply-templates/>
-    </em>
+    </i>
   </xsl:template>
-  <!-- bold -->
-  <xsl:template match="tei:hi[substring(@rend, 1, 1)='b']">
-    <b>
+  <xsl:template match="tei:hi[not(@rend)]">
+    <i>
       <xsl:apply-templates/>
-    </b>
+    </i>
   </xsl:template>
   <!-- Exposant -->
   <xsl:template match="tei:hi[@rend='sup']">
@@ -329,24 +381,9 @@ Transform XDGE in html.
       <xsl:apply-templates/>
     </sub>
   </xsl:template>
-  <!-- normal in italic, encoded as italic in italic -->
-  <xsl:template match="tei:hi[@rend='roman'] | tei:hi[@rend='n']">
-    <i>
-      <xsl:apply-templates/>
-    </i>
-  </xsl:template>
   <!-- Different sections with labels: etymologia, morphological informations, Dmic -->
   <xsl:template match="tei:form//tei:form | tei:etym ">
-    <xsl:variable name="class">
-      <xsl:choose>
-        <xsl:when test="@type">
-          <xsl:value-of select="translate(@type, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:value-of select="local-name()"/>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
+    <xsl:variable name="class" select="normalize-space(concat(local-name(), ' ', @type))"/>
     <div class="{$class}">
       <label>
         <xsl:choose>
@@ -364,12 +401,48 @@ Transform XDGE in html.
   <xsl:template match="tei:bibl[@type='dmic']">
     <div class="dmic">
       <xsl:apply-templates/>
-    </div>    
+    </div>
   </xsl:template>
   <xsl:template match="tei:bibl[@type='dmic']/tei:title">
     <label>
       <xsl:apply-templates/>
-    </label>    
+    </label>
+  </xsl:template>
+  <xsl:template match="tei:title">
+    <cite>
+      <xsl:apply-templates/>
+    </cite>
+  </xsl:template>
+  <xsl:template match="tei:bibl">
+    <span class="bibl" id="{@xml:id}">
+      <xsl:apply-templates/>
+    </span>
+  </xsl:template>
+  <xsl:template match="tei:biblScope">
+    <span class="{local-name()}">
+      <xsl:apply-templates/>
+    </span>
+  </xsl:template>
+  <xsl:template match="tei:author">
+    <!-- One day, a link ? -->
+    <span class="{local-name()}">
+      <xsl:apply-templates/>
+    </span>
+  </xsl:template>
+  <xsl:template match="tei:date">
+    <time>
+      <xsl:apply-templates/>
+    </time>
+  </xsl:template>
+  <xsl:template match="tei:pc">
+    <b class="{local-name()}">
+      <xsl:apply-templates/>
+    </b>
+  </xsl:template>
+  <xsl:template match="tei:placeName">
+    <span class="{local-name()}">
+      <xsl:apply-templates/>
+    </span>
   </xsl:template>
   <!-- <*>, default model for unknown tag -->
   <xsl:template match="*">
@@ -407,25 +480,30 @@ article_{sense/@n}    :
   <xsl:template name="id">
     <!--
     <xsl:value-of select="ancestor-or-self::tei:entry[1]/tei:form/tei:orth[@type='lemma']"/>
-    -->
     <xsl:variable name="cit">
       <xsl:for-each select="ancestor-or-self::tei:cit[1]">
         <xsl:number level="any" from="tei:entry"/>
       </xsl:for-each>
     </xsl:variable>
+    -->
     <xsl:choose>
       <xsl:when test="@xml:id">
         <xsl:value-of select="@xml:id"/>
       </xsl:when>
-      <xsl:when test="$cit != ''">
-        <xsl:value-of select="ancestor-or-self::tei:entry[1]/@xml:id"/>
-        <xsl:text>_cit</xsl:text>
-        <xsl:value-of select="$cit"/>
-      </xsl:when>
-      <xsl:when test="ancestor-or-self::tei:sense[@n][1]">
+      <xsl:when test="ancestor-or-self::tei:sense">
         <xsl:value-of select="ancestor-or-self::tei:entry[1]/@xml:id"/>
         <xsl:text>_</xsl:text>
-        <xsl:value-of select="ancestor-or-self::tei:sense[@n][1]/@n"/>
+        <xsl:for-each select="ancestor-or-self::tei:sense">
+          <xsl:choose>
+            <xsl:when test="tei:num">
+              <xsl:value-of select="tei:num"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>.</xsl:text>
+              <xsl:number/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
       </xsl:when>
     </xsl:choose>
   </xsl:template>

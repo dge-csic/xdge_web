@@ -1,12 +1,23 @@
 * text eol=lf
+*.tsv text
+*.csv text
 
-# binary files that git must not modified
+# Specific Windows
+*.bat text eol=crlf
+
+# truly binary and should not be modified.
 *.db binary
-*.doc binary
 *.docx binary
+*.jar binary
 *.jpg binary
+*.odg binary
 *.odt binary
+*.otf binary
 *.pdf binary
 *.png binary
-*.psd binary
-*.sqlite binary
+*.pptx binary
+*.ttf binary
+*.xlsx binary
+*.woff binary
+*.woff2 binary
+*.zip binary
