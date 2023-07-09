@@ -203,7 +203,7 @@ in your parameter file<br/>
             }
             if ($count > 1) $menu = '<p class="menu">' . $menu . ".</p>\n\n";
             else $menu = "";
-            return "!-- $where $form : $count -->\n" . $menu . $html;
+            return "<!-- $where $form : $count -->\n" . $menu . $html;
         }
     }
 }

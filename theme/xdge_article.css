@@ -81,6 +81,7 @@ body {
 
 html {
     font-size: 14pt;
+    font-family: var(--sans-serif);
 }
 
 /* Default html */
@@ -114,25 +115,16 @@ h1 a {
     color: inherit;
 }
 
-sup, sub {
-    height: 0;
-    line-height: 1.2em;
-    vertical-align: baseline;
-    position: relative;
-    z-index: inherit;
-    font-variant: normal;
-    font-size: 75%;
-}
-
 sup {
-    _vertical-align: top;
-    bottom: 1.2ex;
-    font-size: 0.58em;
+    position: relative;
+    top: -0.5em;
+    font-size: 80%;
 }
 
 sub {
-    _vertical-align: bottom;
-    top: .5ex;
+    position: relative;
+    bottom: -0.5em;
+    font-size: 80%;
 }
 
 /* the default value in input, lines should be separated to work */
@@ -200,7 +192,8 @@ nav.prevnext .next {
     text-align: right;
 }
 
-article .body {
+article.entry .body {
+    max-width: 40em;
     padding: 2rem 1rem;
     background-color: var(--bg);
     overflow-anchor: none;
@@ -358,9 +351,9 @@ span.bibl {
     font-size: 0.85rem;
 }
 
-header>div.form,
-article.entry>div.bibl,
-article.entry>div.etym {
+header>.form,
+article.entry>.bibl,
+article.entry>.etym {
     padding: 0.3rem 0.7rem;
     border-top: 2px solid var(--bg);
 }
@@ -369,57 +362,6 @@ header>div.form1 {
     border-top: none;
 }
 
-entry>bibl,
-entry>etym,
-entry>form {
-    /* header et footer d’article */
-    margin-left: -1rem;
-    margin-right: -1rem;
-    background-color: var(--bg_soft);
-}
-
-entry[type="xr"]>xr,
-entry[type="dmic"]>bibl {
-    /* corps d’article */
-    margin: 1rem 0;
-    background-color: unset;
-    padding: unset;
-    border: unset;
-}
-
-etym:before {
-    content: "Etimología: ";
-}
-
-form[type="alolema"]:before {
-    content: "Alolema(s): ";
-}
-
-form[type="grafia"]:before {
-    content: "Grafía: ";
-}
-
-form[type="morfologia"]:before {
-    content: "Morfología: ";
-}
-
-form[type="prosodia"]:before {
-    content: "Prosodia: ";
-}
-
-etym:before,
-form[type="alolema"]:before,
-form[type="grafia"]:before,
-form[type="morfologia"]:before,
-form[type="prosodia"]:before {
-    font-size: 85%;
-    font-weight: 500;
-    color: var(--marker);
-}
-
-hi {
-    font-style: italic;
-}
 
 .def>i,
 i>i,
@@ -433,18 +375,6 @@ i>i,
 
 q[lang="spa"] i {
     font-stretch: semi-condensed;
-}
-
-sup {
-    position: relative;
-    top: -0.5em;
-    font-size: 80%;
-}
-
-sub {
-    position: relative;
-    bottom: -0.5em;
-    font-size: 80%;
 }
 
 a.ref {

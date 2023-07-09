@@ -25,7 +25,7 @@ Transform XDGE in html.
     </xsl:choose>
   </xsl:param>
   <!-- folder for theme -->
-  <xsl:param name="theme">theme/</xsl:param>
+  <xsl:param name="theme">../xdge_web/theme/</xsl:param>
   <!-- Share the same html prolog -->
   <xsl:template name="prolog">
     <xsl:text disable-output-escaping="yes"><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
@@ -176,7 +176,7 @@ Transform XDGE in html.
   <!-- Entry head -->
   <xsl:template match="tei:entry / tei:form">
     <header>
-      <div class="form form1">
+      <section class="form form1">
         <xsl:for-each select="*[not(self::tei:form)]">
           <xsl:choose>
             <xsl:when test="position() != 1">
@@ -185,7 +185,7 @@ Transform XDGE in html.
           </xsl:choose>
           <xsl:apply-templates select="."/>
         </xsl:for-each>
-      </div>
+      </section>
       <xsl:text>&#10;          </xsl:text>
       <xsl:apply-templates select="tei:form"/>
     </header>
@@ -384,19 +384,21 @@ Transform XDGE in html.
   <!-- Different sections with labels: etymologia, morphological informations, Dmic -->
   <xsl:template match="tei:form//tei:form | tei:etym ">
     <xsl:variable name="class" select="normalize-space(concat(local-name(), ' ', @type))"/>
-    <div class="{$class}">
-      <label>
-        <xsl:choose>
-          <xsl:when test="self::tei:etym">Etimología</xsl:when>
-          <xsl:when test="@type='alolema'">Alolema(s)</xsl:when>
-          <xsl:when test="@type='grafia'">Grafía</xsl:when>
-          <xsl:when test="@type='prosodia'">Prosodia</xsl:when>
-          <xsl:when test="@type='morfologia'">Morfología</xsl:when>
-        </xsl:choose>
-      </label>
-      <xsl:text>: </xsl:text>
-      <xsl:apply-templates/>
-    </div>
+    <section class="{$class}">
+      <div>
+        <label>
+          <xsl:choose>
+            <xsl:when test="self::tei:etym">Etimología</xsl:when>
+            <xsl:when test="@type='alolema'">Alolema(s)</xsl:when>
+            <xsl:when test="@type='grafia'">Grafía</xsl:when>
+            <xsl:when test="@type='prosodia'">Prosodia</xsl:when>
+            <xsl:when test="@type='morfologia'">Morfología</xsl:when>
+          </xsl:choose>
+        </label>
+        <xsl:text>: </xsl:text>
+        <xsl:apply-templates/>
+      </div>
+    </section>
   </xsl:template>
   <xsl:template match="tei:bibl[@type='dmic']">
     <div class="dmic">

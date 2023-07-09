@@ -1,59 +1,108 @@
-#body {
-    background-color: var(--royal);
+:root {
+    --left_width: 270px;
 }
 
 
-#aside {
-    color: #333333;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#EEEEEE', GradientType=1);
-    /* for old IE */
+#win {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0;
     background-color: #FFFFFF;
-    /* fallback color if gradients are not supported */
-    background-image: -webkit-linear-gradient(left, #FFFFFF, #EEEEEE);
-    /* For Chrome and Safari */
-    background-image: -moz-linear-gradient(left, #FFFFFF, #EEEEEE);
-    /* For old Fx (3.6 to 15) */
-    background-image: -ms-linear-gradient(left, #FFFFFF, #EEEEEE);
-    /* For pre-releases of IE 10*/
-    background-image: -o-linear-gradient(left, #FFFFFF, #EEEEEE);
-    /* For old Opera (11.1 to 12.0) */
-    background-image: linear-gradient(to right, #FFFFFF, #EEEEEE);
-    /* Standard syntax; must be last */
+    background-image: linear-gradient(to right, #FFFFFF, var(--bg_soft) 292px, #353b90);
+    padding: 22px 22px 0 22px;
+    position: relative;
+}
 
+#middle {
+    display: flex;
+    width: 100%;
+    background-color: var(--bg_soft);
+    height: calc(100vh - 120px);
+    flex-grow: 0;
+    flex-shrink: 0;
+    position: relative;
+}
+
+#middle > * {
+    position: relative;
+}
+
+#header {
+    position: relative;
+    height: 70px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+#tabs-left {
     position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 270px;
+}
+#tabs-right {
+    position: absolute;
+    bottom: 0;
+    left: 270px;
+    padding-left: 100px;
+    right: 0;
+}
+
+
+
+.tabs {
+    height: 22px;
+    border-bottom: 1px  #7698C9 solid;
+    font-size: 13px;
+}
+.tabs a {
+    border: 1px transparent solid;
+    border-bottom: 1px #7698C9 solid;
+    height: 22px;
+    display: block;
+    float: left;
+    white-space: nowrap;
+    line-height: 21px;
+    text-decoration: none;
+    padding: 0 1ex 5px 1ex;
+    color: #666666 !important;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    margin-bottom: -1px;
+}
+
+.tabs a:hover , 
+.tabs a.active {
+    border-color: #FFFFFF;
+}
+
+.tabs a.active,
+.tabs a:hover {
+    background-color: var(--bg_soft);
+    color: #B9121A !important;
+    border-left: 1px #7698C9 solid;
+    border-top: 1px #7698C9 solid;
+    border-right: 1px #7698C9 solid;
+}
+
+
+
+#article {
+    overflow: auto;
     height: 100%;
+}
+
+#left {
+    color: #333333;
     width: 270px;
-    top: 0;
-    bottom: 0px;
-    overflow: hidden;
     padding: 0;
 }
 
-#header .grad,
-#footer {
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#EEEEEE', endColorstr='#353b90', GradientType=1);
-    /* for IE */
-    background-color: #FFFFFF;
-    /* fallback color if gradients are not supported */
-    background-image: -webkit-linear-gradient(left, #EEEEEE, #353b90);
-    /* For Chrome and Safari */
-    background-image: -moz-linear-gradient(left, #EEEEEE, #353b90);
-    /* For old Fx (3.6 to 15) */
-    background-image: -ms-linear-gradient(left, #EEEEEE, #353b90);
-    /* For pre-releases of IE 10*/
-    background-image: -o-linear-gradient(left, #EEEEEE, #353b90);
-    /* For old Opera (11.1 to 12.0) */
-    background-image: linear-gradient(to right, #EEEEEE, #353b90);
-    /* Standard syntax; must be last */
-}
 
-#header .grad,
-#header {
+#left > header,
+#right > header {
     height: 85px;
-}
-
-#header {
-    margin: 0px 0px 0px 270px;
 }
 
 #header .grad {
@@ -70,43 +119,14 @@
     color: #FFFFFF;
 }
 
-#langBar {
-    position: absolute;
-    top: 70px;
-    right: 90px;
-    font-size: 12px;
-}
 
-#langBar a {
-    padding-left: 1ex;
-    padding-right: 1ex;
-    border-right: 1px solid #FFFFFF;
-    text-decoration: none;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-}
-
-#langBar a:hover, #langBar a.active {
-    background: #FFFFFF;
-    color: #888888;
-    text-decoration: none;
-}
-
-#header, #footer, #header a, #footer a {
+.right #header, 
+.right #header a, 
+#footer, 
+#footer a {
     color: #FFFFFF;
 }
 
-#home {
-    height: 63px;
-    padding-left: 24px;
-    line-height: 46px;
-    font-size: 22px;
-}
-
-#home a {
-    font-weight: normal;
-    margin: 0;
-}
 
 #form {
     text-align: left;
@@ -114,18 +134,28 @@
     /* height:22px; needed for background */
 }
 
-#nav {
-    position: absolute;
-    margin: 0;
-    bottom: 23px;
-    top: 85px;
-    left: 24px;
-    right: 0px;
-    border: 1px #7698C9 solid;
-    overflow: auto;
-}
-
-#nav iframe {
+#header > .right {
     position: absolute;
     right: 0;
+    top: 0;
+    display: flex;
+    color: #fff;
+    font-size: 22px;
+    line-height: 22px;
+    font-family: var(--serif);
 }
+
+#header > .left {
+    font-size: 22px;
+    line-height: 22px;
+    font-family: var(--serif);
+    color: #353b90;
+}
+
+
+#header a {
+    font-weight: normal;
+    color: inherit;
+    text-decoration: none;
+}
+
