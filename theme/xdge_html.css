@@ -1,0 +1,17 @@
+@import url("xdge_article.css");
+
+body {
+    line-height: 140%;
+    color: var(--text_soft);
+    background-color: var(--bg_marg);
+    padding: 2rem;
+    font-family: var(--sans-serif);
+    font-weight: 300;
+}
+
+body {
+    width: 55rem;
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
+}

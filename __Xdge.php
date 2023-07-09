@@ -1,8 +1,7 @@
 <?php // encoding="UTF-8"
 
-include_once(__DIR__ . '/php/autoload.php');
+include_once(__DIR__ . '/vendor/autoload.php');
 
-use Oeuvres\Kit\{Web};
 
 Xdge::init();
 class Xdge
@@ -35,14 +34,14 @@ class Xdge
     static $el_grc_tr;
 
     /** constructor */
-    static function init()
+    static public function init()
     {
-        $pars_file = __DIR__ . "/pars.php";
-        if (!file_exists($pars_file)) {
-            throw new Exception("Parameters file not found, expected in:<br/> 
-".$pars_file);
+        $config_file = __DIR__ . "/config.php";
+        if (!file_exists($config_file)) {
+            throw new Exception("Configuration file not found, expected in:<br/> 
+".$config_file);
         }
-        self::$p = include($pars_file);
+        self::$p = include($config_file);
         // load transliteration tables
         $dir = __DIR__ . '/json/';
         self::$grc_tr = json_decode(file_get_contents($dir . 'grc.json'), true, 512, JSON_THROW_ON_ERROR);

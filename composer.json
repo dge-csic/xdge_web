@@ -1,6 +1,6 @@
 {
-    "name": "dge-csic/teinte_galenus",
-    "description": "Convert OCR files",
+    "name": "dge-csic/xdge_web",
+    "description": "Build and publish dge-csic/xdge_xml",
     "type": "project",
     "authors": [
         {

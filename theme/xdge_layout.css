@@ -1,0 +1,131 @@
+#body {
+    background-color: var(--royal);
+}
+
+
+#aside {
+    color: #333333;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#EEEEEE', GradientType=1);
+    /* for old IE */
+    background-color: #FFFFFF;
+    /* fallback color if gradients are not supported */
+    background-image: -webkit-linear-gradient(left, #FFFFFF, #EEEEEE);
+    /* For Chrome and Safari */
+    background-image: -moz-linear-gradient(left, #FFFFFF, #EEEEEE);
+    /* For old Fx (3.6 to 15) */
+    background-image: -ms-linear-gradient(left, #FFFFFF, #EEEEEE);
+    /* For pre-releases of IE 10*/
+    background-image: -o-linear-gradient(left, #FFFFFF, #EEEEEE);
+    /* For old Opera (11.1 to 12.0) */
+    background-image: linear-gradient(to right, #FFFFFF, #EEEEEE);
+    /* Standard syntax; must be last */
+
+    position: absolute;
+    height: 100%;
+    width: 270px;
+    top: 0;
+    bottom: 0px;
+    overflow: hidden;
+    padding: 0;
+}
+
+#header .grad,
+#footer {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#EEEEEE', endColorstr='#353b90', GradientType=1);
+    /* for IE */
+    background-color: #FFFFFF;
+    /* fallback color if gradients are not supported */
+    background-image: -webkit-linear-gradient(left, #EEEEEE, #353b90);
+    /* For Chrome and Safari */
+    background-image: -moz-linear-gradient(left, #EEEEEE, #353b90);
+    /* For old Fx (3.6 to 15) */
+    background-image: -ms-linear-gradient(left, #EEEEEE, #353b90);
+    /* For pre-releases of IE 10*/
+    background-image: -o-linear-gradient(left, #EEEEEE, #353b90);
+    /* For old Opera (11.1 to 12.0) */
+    background-image: linear-gradient(to right, #EEEEEE, #353b90);
+    /* Standard syntax; must be last */
+}
+
+#header .grad,
+#header {
+    height: 85px;
+}
+
+#header {
+    margin: 0px 0px 0px 270px;
+}
+
+#header .grad {
+    margin-right: 90px;
+    color: #FFFFFF;
+    text-align: right;
+    font-size: 22px;
+    font-weight: normal;
+    line-height: 95%;
+    padding-top: 10px;
+}
+
+#header .grad a {
+    color: #FFFFFF;
+}
+
+#langBar {
+    position: absolute;
+    top: 70px;
+    right: 90px;
+    font-size: 12px;
+}
+
+#langBar a {
+    padding-left: 1ex;
+    padding-right: 1ex;
+    border-right: 1px solid #FFFFFF;
+    text-decoration: none;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+#langBar a:hover, #langBar a.active {
+    background: #FFFFFF;
+    color: #888888;
+    text-decoration: none;
+}
+
+#header, #footer, #header a, #footer a {
+    color: #FFFFFF;
+}
+
+#home {
+    height: 63px;
+    padding-left: 24px;
+    line-height: 46px;
+    font-size: 22px;
+}
+
+#home a {
+    font-weight: normal;
+    margin: 0;
+}
+
+#form {
+    text-align: left;
+    padding: 0px 0px 0px 24px;
+    /* height:22px; needed for background */
+}
+
+#nav {
+    position: absolute;
+    margin: 0;
+    bottom: 23px;
+    top: 85px;
+    left: 24px;
+    right: 0px;
+    border: 1px #7698C9 solid;
+    overflow: auto;
+}
+
+#nav iframe {
+    position: absolute;
+    right: 0;
+}

@@ -3,12 +3,13 @@
 /**
  * Global pilot of xdge app
  */
-XdgeBuild::init();
+XdgeBuild::build(
+    dirname(__DIR__) . '/xdge.db', 
+    dirname(dirname(__DIR__)) . '/xdge_xml/xdge*.xml'
+);
 
 class XdgeBuild
 {
-    /** Global parameters for the app */
-    static $p;
     /** SQL connexion */
     static $pdo;
     /** Count */
@@ -29,23 +30,27 @@ class XdgeBuild
     /** a transliterration table to convert modern accentued greek in ancient  */
     static $el_grc_tr;
 
-    /** constructor */
-    static function init()
+    /** create new database */
+    static function build($sqlite_file, $xml_glob)
     {
-
-        // create new database
-        $db_file = self::$p['xdge_db'];
-        $dir = dirname($db_file);
+        $dir = dirname($sqlite_file);
         if (is_dir($dir));
         else if (!mkdir($dir, 0775, true)) {
             throw new Exception("Directory not created: ".$dir);
         }
-        if (file_exists($db_file)) unlink($db_file);
-        self::$pdo = self::connect($db_file);
+        if (file_exists($sqlite_file)) unlink($sqlite_file);
+        self::$pdo = self::connect($sqlite_file);
         $sql = file_get_contents(__DIR__."/xdge.sql");
         self::$pdo->exec($sql);
-
-        self::load(self::$p['xdge_glob']);
+        // load transliteration tables
+        $dir = dirname(__DIR__) . '/json/';
+        self::$grc_tr = json_decode(file_get_contents($dir . 'grc.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$lat_tr = json_decode(file_get_contents($dir . 'lat.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$grc_lat_tr = json_decode(file_get_contents($dir . 'grc_lat.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$lat_grc_tr = json_decode(file_get_contents($dir . 'lat_grc.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$orth_tr =json_decode(file_get_contents($dir . 'orth.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$el_grc_tr = json_decode(file_get_contents($dir . 'el_grc.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::load($xml_glob);
     }
     /** Connexion */
     static function connect($file)
@@ -98,7 +103,8 @@ class XdgeBuild
         $lemma = strtr(trim($lemma), self::$el_grc_tr);
         $form = strtr($lemma, self::$orth_tr);
         // normalize lemma for access, punctuation and diacritics
-        $monoton = strtr($form, self::$grc_tr);
+        // $monoton = strtr($form, self::$grc_tr);
+        $monoton = self::monoton($form);
         $latin = strtr($monoton, self::$grc_lat_tr);
         // strrev() or str_split() are not UTF-8 OK
         $rev = implode(array_reverse(preg_split('//u', $monoton, -1, PREG_SPLIT_NO_EMPTY)));
