@@ -128,16 +128,18 @@ class XdgeBuild
     preg_match('/\s*([0-9]+)/', $lemma, $matches);
     if (isset($matches[1])) $monoton.=$matches[1];
     */
+        $html = self::xml($html);
         self::$insEntry->execute(array(
             $xmlid,
             $lemma,
             self::xml($label, true),
-            self::xml($html),
+            $html,
             $form,
             $monoton,
             $latin,
             $rev,
         ));
+        // echo $html;
         $rowid = self::$pdo->lastInsertId();
         /*
         self::$insSearch->execute(array(

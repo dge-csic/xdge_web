@@ -7,8 +7,14 @@ include_once(__DIR__ . '/vendor/autoload.php');
 use Psr\Log\{LogLevel};
 use Oeuvres\Kit\{Route, I18n, Http, Log, LoggerWeb};
 
-
-
+// no template
+Route::get(
+    '/article/(.*)',
+    __DIR__ . '/article.php',
+    array(
+        'form' => '$1',
+    )
+);
 
 // register the default template in which include content
 Route::template(__DIR__ . '/template.php');

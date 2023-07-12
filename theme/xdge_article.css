@@ -174,8 +174,6 @@ article.entry {
 
 nav.prevnext {
     display: flex;
-    margin-left: -0.8rem;
-    margin-right: -0.8rem;
     padding: 0.2rem 0 2rem 0;
 }
 
@@ -393,8 +391,8 @@ a.ref .num {
 
 section.sense>b.pc,
 section.sense>b.num {
+    display: block;
     float: left;
-    display: right;
     width: 1.5rem;
     font-size: 85%;
     font-weight: bold;

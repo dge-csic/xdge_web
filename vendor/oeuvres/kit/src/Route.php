@@ -237,6 +237,7 @@ class Route {
 
         // no template registred, no template recorded
         if ($tmpl_file === '' && !self::$tmpl_file) {
+            $tmpl_file = null;
         }
         // no template requested, send first one
         else if ($tmpl_file === '') {
@@ -244,6 +245,7 @@ class Route {
         }
         // explitly no template requested
         else if ($tmpl_file === null || $tmpl_file === false) {
+            $tmpl_file = null;
         }
         // template file not available, inform dev
         else if (!Filesys::readable($tmpl_file)) {

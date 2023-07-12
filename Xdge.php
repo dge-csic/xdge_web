@@ -183,7 +183,7 @@ in your parameter file<br/>
         $form = strtr($form, self::$orth_tr);
         if ($html = self::artquery("form = ?", $form)) return $html;
         // with no diacritics ?
-        $form = strtr($form, self::$grc_tr);
+        $form = self::monoton($form);
         if ($html = self::artquery("monoton = ?", $form)) return $html;
         // latin ?
         if ($html = self::artquery("latin = ?", $form)) return $html;

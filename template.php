@@ -18,12 +18,6 @@ $home_href = Route::home_href();
     <title><?= Route::title() ?></title>
     <link rel="stylesheet" href="theme/xdge_article.css" />
     <link rel="stylesheet" href="theme/xdge_layout.css" />
-    <script type="text/javascript" src="<?= Route::home_href() ?>theme/dge.js">
-        //
-    </script>
-    <script type="text/javascript" src="<?= Route::home_href() ?>theme/xdge.js">
-        //
-    </script>
 </head>
 
 <body>
@@ -59,10 +53,11 @@ echo'>Inverso</a>';
         </header>
         <div id="middle">
             <div id="left">
-                <form>
+                <form name="lemmas" action="lemmas.php">
                     <input name="form" id="form"/>
+                    <input type="hidden" name="inverso"/>
                 </form>
-                <div id="lemma">
+                <div id="lemmas" data-url="lemmas.php">
                     <!-- -->
                 </div>
             </div>
@@ -73,11 +68,18 @@ echo'>Inverso</a>';
             </div>
         </div>
         <footer id="footer">
-            <a href="#" onmouseover="this.href='ma'+'ilto'+'\x3A'+'dge'+'\x40'+'cchs.csic.es'">Proyecto DGE (contacto)</a> - <a target="article" href="doc/licencia.html">Licencia</a> - <a target="_blank" href="http://www.csic.es/">CSIC</a>
-
-            <a href="https://github.com/dge-csic/xdge_xml" title="&lt;TEI&gt xml source" target="_new"><img alt="&lt;TEI&gt" src="<?= Route::home_href() ?>theme/tei.png" /></a>
+            <a id="tei" href="https://github.com/dge-csic/xdge_xml" title="&lt;TEI&gt xml source" target="_new"><img alt="&lt;TEI&gt" src="<?= Route::home_href() ?>theme/tei.png" /></a>
+            <div>
+            <a href="#" onmouseover="this.href='ma'+'ilto'+'\x3A'+'dge'+'\x40'+'cchs.csic.es'">Proyecto DGE (contacto)</a> – <a target="article" href="doc/licencia.html">Licencia</a> – <a target="_blank" href="http://www.csic.es/">CSIC</a>
+            <div>
         </footer>
     </div>
+    <script src="<?= Route::home_href() ?>theme/xdge.js">//</script>
+    <script>
+const form = document.forms['lemmas'];
+form.form.value = '<?= $form ?>';
+form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+    </script>
 </body>
 
 </html>

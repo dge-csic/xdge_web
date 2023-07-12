@@ -68,55 +68,58 @@ Transform XDGE in html.
     <xsl:text>&#10;        </xsl:text>
     <nav class="prevnext">
       <xsl:text>&#10;          </xsl:text>
-      <xsl:for-each select="preceding-sibling::tei:entry[1]">
-        <a class="prev">
+      <a class="prev">
+        <xsl:for-each select="preceding-sibling::tei:entry[1]">
           <xsl:attribute name="href">
             <xsl:call-template name="id"/>
           </xsl:attribute>
-          <xsl:text>◀ </xsl:text>
-          <xsl:value-of select="tei:form/tei:orth"/>
-        </a>
-        <xsl:text> </xsl:text>
-      </xsl:for-each>
+            <xsl:text>◀ </xsl:text>
+            <xsl:value-of select="tei:form/tei:orth"/>
+          <xsl:text> </xsl:text>
+        </xsl:for-each>
+        <xsl:if test="not(preceding-sibling::tei:entry)"> </xsl:if>
+      </a>
       <xsl:text>&#10;          </xsl:text>
-      <xsl:for-each select="following-sibling::tei:entry[1]">
-        <a class="next">
+      <a class="next">
+        <xsl:for-each select="following-sibling::tei:entry[1]">
           <xsl:attribute name="href">
             <xsl:call-template name="id"/>
           </xsl:attribute>
           <xsl:value-of select="tei:form/tei:orth"/>
           <xsl:text> ▶</xsl:text>
-        </a>
-      </xsl:for-each>
+        </xsl:for-each>
+        <xsl:if test="not(following-sibling::tei:entry)"> </xsl:if>
+      </a>
       <xsl:text>&#10;        </xsl:text>
     </nav>
     <xsl:text>&#10;        </xsl:text>
   </xsl:template>
   <xsl:template match="tei:entry">
-    <xsl:call-template name="prevnext"/>
-    
-    <div class="row">
-      <article class="entry {@type}">
-        <xsl:attribute name="id">
-          <xsl:call-template name="id"/>
-        </xsl:attribute>
-        <xsl:apply-templates select="tei:form"/>
-        <div class="body">
-          <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:etym)][not(self::tei:bibl)]"/>
-        </div>
-        <xsl:if test="tei:bibl | tei:etym">
-          <footer>
-            <xsl:apply-templates select="tei:bibl | tei:etym"/>
-          </footer>
-        </xsl:if>
-      </article>
-      <nav class="entry-nav">
-        <xsl:if test="tei:sense[tei:num]">
-          <ul>
-            <xsl:apply-templates mode="toc" select="tei:sense[tei:num]"/>
-          </ul>
-        </xsl:if>
-      </nav>
+    <div class="entry-cont">
+      <xsl:call-template name="prevnext"/>
+      <div class="row">
+        <article class="entry {@type}">
+          <xsl:attribute name="id">
+            <xsl:call-template name="id"/>
+          </xsl:attribute>
+          <xsl:apply-templates select="tei:form"/>
+          <div class="body">
+            <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:etym)][not(self::tei:bibl)]"/>
+          </div>
+          <xsl:if test="tei:bibl | tei:etym">
+            <footer>
+              <xsl:apply-templates select="tei:bibl | tei:etym"/>
+            </footer>
+          </xsl:if>
+        </article>
+        <nav class="entry-nav">
+          <xsl:if test="tei:sense[tei:num]">
+            <ul>
+              <xsl:apply-templates mode="toc" select="tei:sense[tei:num]"/>
+            </ul>
+          </xsl:if>
+        </nav>
+      </div>
     </div>
   </xsl:template>
   <!-- -->

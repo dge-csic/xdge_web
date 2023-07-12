@@ -64,13 +64,13 @@ if ($rowid === false) {
     // δῆλος 1, δῆλος 2.  homograph hack
     while ($row = $q->fetch(PDO::FETCH_ASSOC)) {
         $last = $row['rowid'];
-        if ($active && $last == $active) $class = ' id="active" class="active" ';
-        else $class = "";
+        $class = '';
+        // if ($active && $last == $active) $class = " active";
         $i++;
         // homograph, do not open a second link here
         if ($row['xmlid'] == $prevId);
         // test Safari ? encoding pb ? rowid param is given to article page to keep
-        else echo '<a', $class, ' id="', $row['xmlid'], '" href="../article/', $row['xmlid'], '">', $row['label'], '</a>', "\n";
+        else echo '<a class="lemma' . $class . '" id="_' . $row['xmlid'] . '" href="' . $row['xmlid'] . '">' . $row['label'] . '</a>' . "\n";
         $prevId = $row['xmlid'];
     }
     // test if there is a lemma left
@@ -78,4 +78,4 @@ if ($rowid === false) {
 }
 
 
-echo "<-- ", $time_start - microtime(true), "ms. -->\n";
+echo "<!-- " . ($time_start - microtime(true)) . "ms. -->\n";

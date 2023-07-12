@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/oeuvres/kit.git",
-                "reference": "5d9ed05b0a24b00540fdfae877b1abd6188ad88d"
+                "reference": "26d046aac78378bf19e97e5e19017047641cd0c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/oeuvres/kit/zipball/5d9ed05b0a24b00540fdfae877b1abd6188ad88d",
-                "reference": "5d9ed05b0a24b00540fdfae877b1abd6188ad88d",
+                "url": "https://api.github.com/repos/oeuvres/kit/zipball/26d046aac78378bf19e97e5e19017047641cd0c0",
+                "reference": "26d046aac78378bf19e97e5e19017047641cd0c0",
                 "shasum": ""
             },
             "require": {
@@ -60,7 +60,7 @@
                 "issues": "https://github.com/oeuvres/kit/issues",
                 "source": "https://github.com/oeuvres/kit/tree/main"
             },
-            "time": "2023-07-07T21:33:12+00:00"
+            "time": "2023-07-12T15:02:37+00:00"
         },
         {
             "name": "psr/log",

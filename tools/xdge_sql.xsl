@@ -34,6 +34,7 @@
   <!-- Process doc for column data, tei:form/tei:orth[@type='lemma'] -->
   <xsl:template match="tei:entry" mode="sql">
     <xsl:variable name="html">
+      <!-- ensure one root element -->
       <xsl:apply-templates select="."/>
     </xsl:variable>
     <xsl:variable name="lemma">

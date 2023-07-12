@@ -2,6 +2,9 @@
     --left_width: 270px;
 }
 
+* {
+    box-sizing: border-box;
+}
 
 #win {
     height: 100vh;
@@ -36,7 +39,7 @@
     padding: 0;
     border-top: none;
     /* ugly hack for a grey pixel in tab */
-    margin-top: -1px;    
+    /* margin-top: -1px; */    
 }
 
 #form {
@@ -50,22 +53,26 @@
     color: var(--rubric);
 }
 
-#lemma {
-    /* lemma suggestion */
+#lemmas {
+    /* lemmas suggestion */
     height: 100%;
-    background-color:aquamarine;
+    background-color:var(--bg_soft);
     overflow-y: scroll;
 }
 
-#lemma::-webkit-scrollbar {
-    /* needed for styling */
+/*
+#lemmas::-webkit-scrollbar {
     width: 18px;
 }
 
-#lemma::-webkit-scrollbar-track {
+#lemmas::-webkit-scrollbar-track {
     background: var(--bg);
 }
 
+#lemmas {
+    scrollbar-color: var(--bg_marg) var(--bg);
+}
+*/
 
 #right {
     width: 100%;
@@ -142,16 +149,6 @@
 }
 
 
-#header .grad {
-    margin-right: 90px;
-    color: #FFFFFF;
-    text-align: right;
-    font-size: 22px;
-    font-weight: normal;
-    line-height: 95%;
-    padding-top: 10px;
-}
-
 #header .grad a {
     color: #FFFFFF;
 }
@@ -168,8 +165,16 @@
 #footer {
     height: 22px;
     font-size: 12px;
-    line-height: 22px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#footer #tei {
+    position: absolute;
+    right: -17px;
+    top: 0;
 }
 
 #header>.right {
@@ -195,4 +200,23 @@
     font-weight: normal;
     color: inherit;
     text-decoration: none;
+}
+
+#lemmas a {
+    padding: 0 1ex 0 1ex;
+    line-height: 117%;
+    text-decoration: none;
+    color: #000000;
+    display: block;
+}
+
+#lemmas a:hover,
+#lemmas a:active,
+#lemmas a:focus,
+#lemmas a.active,
+#lemmas .hilite {
+    text-decoration: none;
+    background: #FFFFFF;
+    font-weight: inherit;
+    color: #B9121B;
 }
