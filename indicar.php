@@ -1,37 +1,39 @@
-<!doctype html><?php
-$time_start = microtime(true);
-/**
-List lemmas
+<?php
 
-1) suggest/[0-9]+ a rowid of a lemma is requested 
-2) suggest/.+ a lemma is requested 
-
- */
+declare(strict_types=1);
 include __DIR__ . "/Xdge.php";
 
-use Oeuvres\Kit\{Web};
+$time_start = microtime(true);
+/**
+ * List lemmas
+ *
+ * 1) suggest/[0-9]+ a rowid of a lemma is requested 
+ * 2) suggest/.+ a lemma is requested 
+ */
 
-// caching on date of the database
-Web::notModified(Xdge::$p['xdge_db']);
+use Oeuvres\Kit\{Http, Route};
+// allow caching on date of the database
+// Http::notModified(Xdge::$p['xdge_db']);
+$form = Http::par('form');
+$inverso = Http::par('inverso', null);
+$home_href = Route::home_href();
+// if number -> rowid
+if (is_numeric($form)) $rowid = $form;
+else if (!$form) $rowid = 0;
+else if ($inverso) $rowid = Xdge::inversoRowid($form);
+// if letters -> letter index
+else $rowid = Xdge::rowid($form);
 
-$lib = ""; // where to find resources
-if (!isset($inverso)) $inverso=false;
+
 
 
 // persistent number of lemmas in column, before and after the selected index
-$before = 0 + Web::par('before', 1);
-if ($before<1) $before=1;
-$after=70-$before;
-if($after < 1) $after=1;
+$before = Http::int('before', 1, 1);
+if ($before < 1) $before = 1;
+$after = 70 - $before;
+if ($after < 1) $after = 1;
 
 
-$pathinfo=Web::pathinfo();
-// if number -> rowid
-if (is_numeric($pathinfo)) $rowid=$pathinfo;
-else if (!$pathinfo) $rowid=0;
-else if($inverso) $rowid = Xdge::inversoRowid($pathinfo);
-// if letters -> letter index
-else $rowid = Xdge::rowid($pathinfo);
 
 // if a word is requested, allow cache by client, to avoid too much hits on keypress
 /*
@@ -45,53 +47,35 @@ if ($form) {
 
 
 
-?>
-<html>
-  <head>
-    <title>Indicar, DGE Diccionario Griego-Español</title>
-    <link rel="stylesheet" href="<?= $lib ?>theme/dge.css"/>
-    <base target="article"/>
-    <script type="text/javascript" src="<?= $lib ?>theme/dge.js">//</script>
-  </head>
-  <body onclick="navGo(null, event)" class="lemmas" <?php
-if ($inverso) echo ' style="text-align:right;"';
-echo '>';
-// echo '<form style="position:fixed; width:100%"><input style="width:100%" name="log"/></form>';
-
-// 
-if ($rowid===false) {
-    echo "<p>No hay ningún lema que empiece por <b>\"",$pathinfo,"\"</b>. La sección de diccionario cubierta por DGE en línea es α - ἔξαυος. </p>";
-}
-else {
-    $start = $rowid-$before;
+if ($rowid === false) {
+    echo "<p>No hay ningún lema que empiece por <b>\"", $form, "\"</b>. La sección de diccionario cubierta por DGE en línea es α - ἔξαυος. </p>";
+} else {
+    $start = $rowid - $before;
     if ($start < 1) $start = 1;
     $end = $rowid + $after;
-    if ($inverso) $q = Xdge::$pdo->prepare("SELECT id, label, rowid FROM inverso WHERE rowid >= ? AND rowid<= ?");
-    else $q = Xdge::$pdo->prepare("SELECT id, label, rowid FROM entry WHERE rowid >= ? AND rowid<= ?");
+    if ($inverso) $q = Xdge::$pdo->prepare("SELECT xmlid, label, rowid FROM inverso WHERE rowid >= ? AND rowid <= ?");
+    else $q = Xdge::$pdo->prepare("SELECT xmlid, label, rowid FROM entry WHERE rowid >= ? AND rowid<= ?");
     // if ($start > 1) echo '<a target="_self" href="',($rowid - $after + $before),'">…</a>',"\n";
 
     $q->execute(array($rowid - $before, $rowid + $after));
     $active = $rowid;
     $i = 0;
-    $prevId="";
+    $prevId = "";
     // δῆλος 1, δῆλος 2.  homograph hack
-    while($row = $q->fetch(PDO::FETCH_ASSOC) ) {
+    while ($row = $q->fetch(PDO::FETCH_ASSOC)) {
         $last = $row['rowid'];
-        if($active && $last == $active) $class = ' id="active" class="active" ';
+        if ($active && $last == $active) $class = ' id="active" class="active" ';
         else $class = "";
         $i++;
         // homograph, do not open a second link here
-        if ($row['id'] == $prevId);
+        if ($row['xmlid'] == $prevId);
         // test Safari ? encoding pb ? rowid param is given to article page to keep
-        else echo '<a',$class,' id="',$row['id'],'" href="../article/',$row['id'],'">' ,$row['label'],'</a>',"\n";
-        $prevId=$row['id'];
+        else echo '<a', $class, ' id="', $row['xmlid'], '" href="../article/', $row['xmlid'], '">', $row['label'], '</a>', "\n";
+        $prevId = $row['xmlid'];
     }
-  // test if there is a lemma left
-  // echo '<a target="_self" href="',($last - $before +1),'">…</a>';
+    // test if there is a lemma left
+    // echo '<a target="_self" href="',($last - $before +1),'">…</a>';
 }
 
 
-echo "<!-- ",$time_start - microtime(true),"ms. -->\n";
-    ?>
-  </body>
-</html>
+echo "<-- ", $time_start - microtime(true), "ms. -->\n";

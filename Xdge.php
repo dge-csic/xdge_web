@@ -67,22 +67,34 @@ in your parameter file<br/>
         }
         self::$pdo = self::connect(self::$p['xdge_db']);
     }
-    /** Conexion */
-    static function connect($sqlite_file)
+
+    /** Connexion */
+    static public function connect($sqlite_file)
     {
-        // persistent
+        // persistent ? no perf 
         $pdo = new PDO(
             "sqlite:" . $sqlite_file,
             NULL,
             NULL,
-            array(PDO::ATTR_PERSISTENT => TRUE),
+            array(PDO::ATTR_PERSISTENT => FALSE),
         );
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         return $pdo;
     }
 
+    /**
+     * Normalize a greek form to lower with no accents
+     */
+    static public function monoton($form)
+    {
+        $form = Normalizer::normalize($form, Normalizer::FORM_D);
+        $form = preg_replace( '@\pM@u', "", $form);
+        $form = mb_strtolower($form);
+        return $form;
+    }
+
     /** For “Busqueda”, build a SQL WHERE clause from params */
-    static function sqlFrom()
+    static public function sqlFrom()
     {
         $sql = " FROM search WHERE text MATCH ? ";
         $i = 0;
@@ -99,53 +111,52 @@ in your parameter file<br/>
         return $sql;
     }
     /** Get rowid of a form */
-    function rowid($form)
+    static public function rowid($form)
     {
         // convert modern greek accentued letter to old greek
         $form = strtr($form, self::$el_grc_tr);
+        // exact id ?
+        $q = self::$pdo->prepare('select rowid FROM entry WHERE xmlid = ?');
+        $q->execute(array($form));
+        if ($rowid = $q->fetchColumn(0)) {
+            return $rowid;
+        }
+        // exact lemma ?
         $q = self::$pdo->prepare('select rowid FROM entry WHERE lemma = ?');
         $q->execute(array($form));
         if ($rowid = $q->fetchColumn(0)) {
-            // no echo before DOCTYPE
-            echo "<!-- exact $form $rowid -->\n";
             return $rowid;
         }
-
         // strip punctuation
         $form = strtr($form, self::$orth_tr);
-        if (($monoton = strtr($form, self::$lat_grc_tr)) != $form) {
-            // no echo before DOCTYPE
-            echo "<!-- latin  $form > $monoton -->\n";
-            $q = self::$pdo->prepare("SELECT rowid FROM entry WHERE latin >= ? LIMIT 10");
-        } else {
-            $form = strtr($form, self::$grc_tr);
-            // no echo before DOCTYPE
-            echo "<!-- monoton $form -->\n";
-            $q = self::$pdo->prepare("SELECT rowid FROM entry WHERE monoton >= ? LIMIT 6;");
-            /* Bug Arma
-"24147","αρμα","Ἅρμα"
-"24150","αρμα","Ἄρμα"
-"24145","αρμα1","1 ἅρμα"
-"24148","αρμα1","1 ἄρμα"
-"24146","αρμα2","2 ἅρμα"
-"24149","αρμα2","2 ἄρμα"
+        // latin ? transliterate
+        $form = strtr($form, self::$lat_grc_tr);
+        $form = self::monoton($form);
+        /* select will be ordered by the index (monoton, rowid) 
+24143 ἅρμα1
+24144 ἅρμα2
+24145 Ἅρμα
+24146 ἄρμα1
+24147 ἄρμα2
+24148 Ἄρμα
       */
-        }
+        $q = self::$pdo->prepare("SELECT rowid, xmlid FROM entry WHERE monoton >= ? LIMIT 1;");
         $q->execute(array($form));
-        $rowid = false;
-        // much more efficient that an ORDER BY rowid
-        while ($value = $q->fetchColumn(0)) {
-            if (!$rowid || $value < $rowid) $rowid = $value;
+        if ($rowid = $q->fetchColumn(0)) {
+            return $rowid;
         }
-        return $rowid;
+        return false;
     }
 
-    function inversoRowid($form)
+    static public function inversoRowid($form)
     {
         // convert modern greek accentued letter to old greek
         $form = strtr($form, self::$el_grc_tr);
-        // monoton
-        $form = trim(strtr(strtr($form, self::$orth_tr), self::$grc_tr));
+        // strip punctuation
+        $form = strtr($form, self::$orth_tr);
+        // latin ? transliterate
+        $form = strtr($form, self::$lat_grc_tr);
+        $form = self::monoton($form);
         // reverse form before searching
         $form = implode(array_reverse(preg_split('//u', $form, -1, PREG_SPLIT_NO_EMPTY)));
         $q = self::$pdo->prepare("SELECT rowid FROM inverso WHERE inverso >= ?  LIMIT 1");
@@ -160,12 +171,12 @@ in your parameter file<br/>
     /**
      * Get an html article to display
      */
-    static function article($form)
+    static public function article($form)
     {
         // convert modern Greek diacritics to old greek
         $form = strtr($form, self::$el_grc_tr);
-        // id ?
-        if ($html = self::artquery("id = ?", $form)) return $html;
+        // xmlid ?
+        if ($html = self::artquery("xmlid = ?", $form)) return $html;
         // lemma ?
         if ($html = self::artquery("lemma = ?", $form)) return $html;
         // without special signs ?
@@ -181,13 +192,13 @@ in your parameter file<br/>
     /**
      * display article 
      */
-    static function artquery($where, $form)
+    static public function artquery($where, $form)
     {
         $query = self::$pdo->prepare('SELECT count(*) FROM entry WHERE ' . $where);
         $query->execute(array($form));
         $count = $query->fetchColumn(0);
         if ($count >= 1) {
-            $query = self::$pdo->prepare('SELECT html, id, label FROM entry WHERE ' . $where);
+            $query = self::$pdo->prepare('SELECT html, xmlid, label FROM entry WHERE ' . $where);
             $query->execute(array($form));
             $html = "";
             $menu = "";

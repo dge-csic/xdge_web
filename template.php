@@ -59,7 +59,12 @@ echo'>Inverso</a>';
         </header>
         <div id="middle">
             <div id="left">
-                Colonnne de nomenclature
+                <form>
+                    <input name="form" id="form"/>
+                </form>
+                <div id="lemma">
+                    <!-- -->
+                </div>
             </div>
             <div id="right">
                 <article id="article">
@@ -67,11 +72,11 @@ echo'>Inverso</a>';
                 </article>
             </div>
         </div>
-        <footer>
+        <footer id="footer">
             <a href="#" onmouseover="this.href='ma'+'ilto'+'\x3A'+'dge'+'\x40'+'cchs.csic.es'">Proyecto DGE (contacto)</a> - <a target="article" href="doc/licencia.html">Licencia</a> - <a target="_blank" href="http://www.csic.es/">CSIC</a>
 
-            <a href="https://github.com/dge-csic/xdge_xml" title="&lt;TEI&gt xml source" target="_new"><img alt="&lt;TEI&gt" src="<?= Route::home_href() ?>theme/img/tei.png" /></a>
-            </footer>
+            <a href="https://github.com/dge-csic/xdge_xml" title="&lt;TEI&gt xml source" target="_new"><img alt="&lt;TEI&gt" src="<?= Route::home_href() ?>theme/tei.png" /></a>
+        </footer>
     </div>
 </body>
 

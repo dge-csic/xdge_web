@@ -4,7 +4,7 @@
  * Global pilot of xdge app
  */
 XdgeBuild::build(
-    dirname(__DIR__) . '/xdge.db', 
+    dirname(__DIR__) . '/xdge.db',
     dirname(dirname(__DIR__)) . '/xdge_xml/xdge*.xml'
 );
 
@@ -36,11 +36,11 @@ class XdgeBuild
         $dir = dirname($sqlite_file);
         if (is_dir($dir));
         else if (!mkdir($dir, 0775, true)) {
-            throw new Exception("Directory not created: ".$dir);
+            throw new Exception("Directory not created: " . $dir);
         }
         if (file_exists($sqlite_file)) unlink($sqlite_file);
         self::$pdo = self::connect($sqlite_file);
-        $sql = file_get_contents(__DIR__."/xdge.sql");
+        $sql = file_get_contents(__DIR__ . "/xdge.sql");
         self::$pdo->exec($sql);
         // load transliteration tables
         $dir = dirname(__DIR__) . '/json/';
@@ -48,7 +48,7 @@ class XdgeBuild
         self::$lat_tr = json_decode(file_get_contents($dir . 'lat.json'), true, 512, JSON_THROW_ON_ERROR);
         self::$grc_lat_tr = json_decode(file_get_contents($dir . 'grc_lat.json'), true, 512, JSON_THROW_ON_ERROR);
         self::$lat_grc_tr = json_decode(file_get_contents($dir . 'lat_grc.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$orth_tr =json_decode(file_get_contents($dir . 'orth.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$orth_tr = json_decode(file_get_contents($dir . 'orth.json'), true, 512, JSON_THROW_ON_ERROR);
         self::$el_grc_tr = json_decode(file_get_contents($dir . 'el_grc.json'), true, 512, JSON_THROW_ON_ERROR);
         self::load($xml_glob);
     }
@@ -64,8 +64,20 @@ class XdgeBuild
     static function load($glob)
     {
         // insert statements
-        self::$insEntry = self::$pdo->prepare("INSERT INTO entry   VALUES (?,?,?,?,?,?,?,?);");
-        self::$insSearch = self::$pdo->prepare("INSERT INTO search VALUES (?,?,?,?,?,?,?,?);");
+        self::$insEntry = self::$pdo->prepare("
+        INSERT INTO entry
+        (
+            xmlid,
+            lemma,
+            label,
+            html,
+            form,
+            monoton,
+            latin,
+            inverso
+        )
+        VALUES (?,?,?,?, ?,?,?,?);");
+        // self::$insSearch = self::$pdo->prepare("INSERT INTO search VALUES (?,?,?,?,?,?,?,?);");
 
         $proc = new XSLTProcessor();
         $proc->registerPHPFunctions();
@@ -81,22 +93,25 @@ class XdgeBuild
             $proc->transformToXML($dom);
         }
         self::$pdo->commit();
+        // load inverso table
+        self::$pdo->exec("INSERT INTO inverso (xmlid, label, inverso) SELECT xmlid, label, inverso FROM entry ORDER BY inverso, rowid;");
         // optimize
         self::$pdo->exec("INSERT INTO  search(search) VALUES ('optimize'); -- optimize fulltext index");
     }
+
     /**
      * Normalize a greek form to lower with no accents
      */
     static public function monoton($form)
     {
         $form = Normalizer::normalize($form, Normalizer::FORM_D);
-        $form = preg_replace( '@\pM@u', "", $form);
+        $form = preg_replace('@\pM@u', "", $form);
         $form = mb_strtolower($form);
         return $form;
     }
 
     /** Insert an entry, method is called by xsl transformation */
-    static function entry($id, $lemma, $label, $html, $text)
+    static function entry($xmlid, $lemma, $label, $html, $text)
     {
         $text = self::xml($text, true);
         // precaution, convert modern greek accentued letter to old greek
@@ -114,7 +129,7 @@ class XdgeBuild
     if (isset($matches[1])) $monoton.=$matches[1];
     */
         self::$insEntry->execute(array(
-            $id,
+            $xmlid,
             $lemma,
             self::xml($label, true),
             self::xml($html),
@@ -124,7 +139,7 @@ class XdgeBuild
             $rev,
         ));
         $rowid = self::$pdo->lastInsertId();
-        //
+        /*
         self::$insSearch->execute(array(
             $rowid,
             $id,
@@ -135,6 +150,7 @@ class XdgeBuild
             $text,
             trim(strtr($text, self::$grc_tr)),
         ));
+        */
     }
     /**
      * get XML from a dom sent by xsl

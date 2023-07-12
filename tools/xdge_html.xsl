@@ -93,30 +93,31 @@ Transform XDGE in html.
     <xsl:text>&#10;        </xsl:text>
   </xsl:template>
   <xsl:template match="tei:entry">
-    <article class="entry {@type}">
-      <xsl:attribute name="id">
-        <xsl:call-template name="id"/>
-      </xsl:attribute>
-      <xsl:call-template name="prevnext"/>
-      <xsl:apply-templates select="tei:form"/>
-      <div class="row">
+    <xsl:call-template name="prevnext"/>
+    
+    <div class="row">
+      <article class="entry {@type}">
+        <xsl:attribute name="id">
+          <xsl:call-template name="id"/>
+        </xsl:attribute>
+        <xsl:apply-templates select="tei:form"/>
         <div class="body">
           <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:etym)][not(self::tei:bibl)]"/>
         </div>
-        <nav class="entry-nav">
-          <xsl:if test="tei:sense[tei:num]">
-            <ul>
-              <xsl:apply-templates mode="toc" select="tei:sense[tei:num]"/>
-            </ul>
-          </xsl:if>
-        </nav>
-      </div>
-      <xsl:if test="tei:bibl | tei:etym">
-        <footer>
-          <xsl:apply-templates select="tei:bibl | tei:etym"/>
-        </footer>
-      </xsl:if>
-    </article>
+        <xsl:if test="tei:bibl | tei:etym">
+          <footer>
+            <xsl:apply-templates select="tei:bibl | tei:etym"/>
+          </footer>
+        </xsl:if>
+      </article>
+      <nav class="entry-nav">
+        <xsl:if test="tei:sense[tei:num]">
+          <ul>
+            <xsl:apply-templates mode="toc" select="tei:sense[tei:num]"/>
+          </ul>
+        </xsl:if>
+      </nav>
+    </div>
   </xsl:template>
   <!-- -->
   <xsl:template match="tei:sense" mode="toc">
@@ -126,36 +127,7 @@ Transform XDGE in html.
           <xsl:text>#</xsl:text>
           <xsl:call-template name="id"/>
         </xsl:attribute>
-        <xsl:if test="@rend='num'">
-          <xsl:value-of select="tei:num"/>
-          <xsl:variable name="clast" select="substring(normalize-space(tei:num), string-length(normalize-space(tei:num)))"/>
-          <xsl:if test="not(contains(').—', $clast))">.</xsl:if>
-        </xsl:if>
-        <xsl:variable name="text">
-          <xsl:variable name="raw">
-            <xsl:for-each select="node()[not(self::tei:num)][not(self::tei:cit)][not(self::tei:sense)][not(self::tei:bibl)]">
-              <xsl:choose>
-                <xsl:when test="translate(normalize-space(.), ',.; ', '') = ''"/>
-                <xsl:otherwise>
-                  <xsl:value-of select="."/>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:for-each>
-          </xsl:variable>
-          <xsl:value-of select="normalize-space($raw)"/>
-        </xsl:variable>
-        <xsl:variable name="len" select="string-length($text)"/>
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="substring($text, 1, $len - 1)"/>
-        <xsl:variable name="last" select="substring($text, $len)"/>
-        <xsl:choose>
-          <!-- Strip ending commas -->
-          <xsl:when test="translate($last, ',;:', '') = ''"/>
-          <xsl:otherwise>
-            <xsl:value-of select="$last"/>
-          </xsl:otherwise>
-        </xsl:choose>
-        
+        <xsl:apply-templates select="node()[1]" mode="next"/>
       </a>
       <xsl:if test="tei:sense[tei:num]">
         <ul>
@@ -163,6 +135,28 @@ Transform XDGE in html.
         </ul>
       </xsl:if>
     </li>
+  </xsl:template>
+  <xsl:template match="tei:milestone[@unit = 'label']"/>
+  <!-- go next -->
+  <xsl:template match="node()" mode="next">
+    <xsl:choose>
+      <xsl:when test="self::tei:milestone[@unit = 'label']"/>
+      <xsl:when test="self::tei:cit"/>
+      <xsl:when test="self::tei:sense"/>
+      <xsl:when test="self::tei:bibl"/>
+      <xsl:when test="self::tei:num">
+        <xsl:value-of select="."/>
+        <xsl:variable name="clast" select="substring(normalize-space(.), string-length(normalize-space(.)))"/>
+        <xsl:if test="not(contains(').—', $clast))">.</xsl:if>
+        <xsl:apply-templates select="following-sibling::node()[1]" mode="next"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select=".">
+          <xsl:with-param name="mode">toc</xsl:with-param>
+        </xsl:apply-templates>
+        <xsl:apply-templates select="following-sibling::node()[1]" mode="next"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   <!-- Sense -->
   <xsl:template match="tei:sense">
@@ -255,19 +249,30 @@ Transform XDGE in html.
   -->
   <!-- Cross-references -->
   <xsl:template match="tei:xr">
-    <xsl:apply-templates/>
+    <xsl:param name="mode"/>
+    <xsl:apply-templates>
+      <xsl:with-param name="mode" select="$mode"/>
+    </xsl:apply-templates>
   </xsl:template>
   <xsl:template match="tei:ref">
-    <a>
-      <xsl:choose>
-        <xsl:when test="@target">
-          <xsl:attribute name="href">
-            <xsl:value-of select="@target"/>
-          </xsl:attribute>
-        </xsl:when>
-      </xsl:choose>
-      <xsl:apply-templates/>
-    </a>
+    <xsl:param name="mode"/>
+    <xsl:choose>
+      <xsl:when test="$mode = 'toc'">
+        <xsl:apply-templates/>
+      </xsl:when>
+      <xsl:otherwise>
+        <a>
+          <xsl:choose>
+            <xsl:when test="@target">
+              <xsl:attribute name="href">
+                <xsl:value-of select="@target"/>
+              </xsl:attribute>
+            </xsl:when>
+          </xsl:choose>
+          <xsl:apply-templates/>
+        </a>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   <!-- The sense(s) container, should be mixed text -->
   <xsl:template match="tei:dictScrap">
@@ -342,8 +347,11 @@ Transform XDGE in html.
   </xsl:template>
   <!-- usage mark -->
   <xsl:template match="tei:usg">
+    <xsl:param name="mode"/>
     <label class="usg">
-      <xsl:apply-templates/>
+      <xsl:apply-templates>
+        <xsl:with-param name="mode" select="$mode"/>
+      </xsl:apply-templates>
     </label>
   </xsl:template>
   <!-- foreign word -->
