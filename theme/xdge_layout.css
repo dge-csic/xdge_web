@@ -19,13 +19,60 @@
     display: flex;
     width: 100%;
     background-color: var(--bg_soft);
-    height: calc(100vh - 120px);
+    height: calc(100vh - 113px);
     flex-grow: 0;
     flex-shrink: 0;
     position: relative;
 }
 
-#middle > * {
+#left {
+    width: var(--left_width);
+    border-left: 1px var(--border) solid;
+    border-bottom: 1px var(--border) solid;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    color: #333333;
+    padding: 0;
+    border-top: none;
+    /* ugly hack for a grey pixel in tab */
+    margin-top: -1px;    
+}
+
+#form {
+    /* suggest field */
+    text-align: left;
+    /* height:22px; needed for background */
+    width: 100%;
+    outline: 0;
+    border: none;
+    padding: 2px 1ex;
+    color: var(--rubric);
+}
+
+#lemma {
+    /* lemma suggestion */
+    height: 100%;
+    background-color:aquamarine;
+    overflow-y: scroll;
+}
+
+#lemma::-webkit-scrollbar {
+    /* needed for styling */
+    width: 18px;
+}
+
+#lemma::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+
+#right {
+    width: 100%;
+    border-bottom: 1px var(--border) solid;
+}
+
+#middle>* {
     position: relative;
 }
 
@@ -35,12 +82,14 @@
     flex-grow: 0;
     flex-shrink: 0;
 }
+
 #tabs-left {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 270px;
 }
+
 #tabs-right {
     position: absolute;
     bottom: 0;
@@ -53,12 +102,14 @@
 
 .tabs {
     height: 22px;
-    border-bottom: 1px  #7698C9 solid;
+    border-bottom: 1px var(--border) solid;
     font-size: 13px;
 }
+
 .tabs a {
     border: 1px transparent solid;
-    border-bottom: 1px #7698C9 solid;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
     height: 22px;
     display: block;
     float: left;
@@ -67,43 +118,29 @@
     text-decoration: none;
     padding: 0 1ex 5px 1ex;
     color: #666666 !important;
-    border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-    margin-bottom: -1px;
-}
-
-.tabs a:hover , 
-.tabs a.active {
-    border-color: #FFFFFF;
+    /* margin-bottom: -1px; */
 }
 
 .tabs a.active,
 .tabs a:hover {
     background-color: var(--bg_soft);
-    color: #B9121A !important;
-    border-left: 1px #7698C9 solid;
-    border-top: 1px #7698C9 solid;
-    border-right: 1px #7698C9 solid;
+    color: var(--rubric) !important;
+    border-left: 1px var(--border) solid;
+    border-top: 1px var(--border) solid;
+    border-right: 1px var(--border) solid;
 }
 
-
+#tabs-left a.active,
+#tabs-left a:hover {
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--bg);
+}
 
 #article {
     overflow: auto;
     height: 100%;
 }
 
-#left {
-    color: #333333;
-    width: 270px;
-    padding: 0;
-}
-
-
-#left > header,
-#right > header {
-    height: 85px;
-}
 
 #header .grad {
     margin-right: 90px;
@@ -119,22 +156,23 @@
     color: #FFFFFF;
 }
 
-
-.right #header, 
-.right #header a, 
-#footer, 
-#footer a {
+#footer {
     color: #FFFFFF;
 }
 
-
-#form {
-    text-align: left;
-    padding: 0px 0px 0px 24px;
-    /* height:22px; needed for background */
+#footer a {
+    color: inherit;
+    text-decoration: none;
 }
 
-#header > .right {
+#footer {
+    height: 22px;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+}
+
+#header>.right {
     position: absolute;
     right: 0;
     top: 0;
@@ -145,7 +183,7 @@
     font-family: var(--serif);
 }
 
-#header > .left {
+#header>.left {
     font-size: 22px;
     line-height: 22px;
     font-family: var(--serif);
@@ -158,4 +196,3 @@
     color: inherit;
     text-decoration: none;
 }
-

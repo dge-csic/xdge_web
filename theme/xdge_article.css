@@ -4,6 +4,7 @@
     --rubric: #B9121B;
     --trad: #04667c;
     --royal: #353B90;
+    --border: #7698C9;
     --marker: #aaa;
     --bg: #fff;
     --bg_marg: #DDD;
@@ -87,7 +88,9 @@ html {
 /* Default html */
 
 /* Restore font-size inheritence */
-table, pre {
+input,
+pre,
+table {
     font-size: inherit;
 }
 
@@ -158,6 +161,7 @@ sub {
 
 article.entry {
     margin-bottom: 1rem;
+    width: 40em;
     /*
     border-top: 2rem solid var(--bg_soft);
     border-bottom: 2rem solid var(--bg_soft);
@@ -193,7 +197,6 @@ nav.prevnext .next {
 }
 
 article.entry .body {
-    max-width: 40em;
     padding: 2rem 1rem;
     background-color: var(--bg);
     overflow-anchor: none;
