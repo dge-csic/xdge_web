@@ -365,7 +365,9 @@ class Formajax {
         if (!a.classList.contains('lemma')) return;
         e.preventDefault();
         // load url
-        const url = 'article/' + a.getAttribute('href');
+        const lemma = a.getAttribute('href');
+        const url = 'article/' + lemma;
+        window.history.pushState({}, '', lemma);
         Formajax.loadHtml(article, url);
     });
 })();

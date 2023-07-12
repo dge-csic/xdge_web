@@ -121,7 +121,7 @@
     display: block;
     float: left;
     white-space: nowrap;
-    line-height: 21px;
+    /* avoid line-height, the px between Chrome and Firefox */
     text-decoration: none;
     padding: 0 1ex 5px 1ex;
     color: #666666 !important;
