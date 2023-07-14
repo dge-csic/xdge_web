@@ -19,7 +19,9 @@ Route::get(
 // register the default template in which include content
 Route::template(__DIR__ . '/template.php');
 // welcome page or error page
-// Route::get('/', __DIR__ . '/page/accueil.php');
+Route::get('/', __DIR__ . '/pages/presentacion.html');
+// try if a local html page is available
+Route::get('/(.*)', __DIR__ . '/pages/$1.html');
 
 // try to have an article
 Route::get(

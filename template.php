@@ -6,7 +6,7 @@ include_once(__DIR__ . '/vendor/autoload.php');
 
 use \Oeuvres\Kit\{Http, Route};
 
-$form = Http::par('form');
+$form = Http::par('form', 'Α');
 $tab = Http::par("tab", "indicar", null, "tab");
 $home_href = Route::home_href();
 ?>
@@ -27,23 +27,13 @@ $home_href = Route::home_href();
                 <a target="_top" href="."><i>DGE</i> en línea</a>
             </div>
             <div class="tabs" id="tabs-left">
-            <?php
-echo '<a title="Lista alfabética de los lemas" id="indicar" ';
-echo ' href="', $home_href ,'indicar/',$form,'" target="suggest" onclick="return tab(this);"';
-if ($tab=="indicar") echo ' class="active"';
-echo '>Lemas</a>';
-
-echo '<a title="Lista de los lemas ordenados por su terminación" id="inverso" ';
-echo ' href="', $home_href ,'inverso/',$form,'" target="suggest" onclick="return tab(this);"';
-if ($tab=="inverso") echo ' class="active"';
-echo'>Inverso</a>';
-
-?>
+                <a title="Lista alfabética de los lemas" id="indicar" class="<?=($tab != 'indicar')?'':'active'?>">Lemas</a>
+                <a title="Lista de los lemas ordenados por su terminación" id="inverso" class="<?=($tab == 'inverso')?'active':''?>">Inverso</a>
             </div>
             <div class="tabs" id="tabs-right">
                 <a href="http://dge.cchs.csic.es/lst/lst4.htm" target="_new" title="Abreviaturas empleadas en el DGE">Abreviaturas</a>
                 <a href="http://dge.cchs.csic.es/lst/lst-int.htm" target="_new" title="Listas de ediciones de referencia y de abreviaturas empleadas en el DGE">Listas</a>
-                <a target="article" href="doc/creditos.html" title="Créditos y agradecimientos">Créditos</a>
+                <a target="article" href="creditos" title="Créditos y agradecimientos">Créditos</a>
 
             </div>
             <div class="right">
@@ -62,24 +52,26 @@ echo'>Inverso</a>';
                 </div>
             </div>
             <div id="right">
-                <article id="article">
+                <main id="main">
                     <?= Route::main() ?>
-                </article>
+                </main>
             </div>
         </div>
         <footer id="footer">
             <a id="tei" href="https://github.com/dge-csic/xdge_xml" title="&lt;TEI&gt xml source" target="_new"><img alt="&lt;TEI&gt" src="<?= Route::home_href() ?>theme/tei.png" /></a>
             <div>
-            <a href="#" onmouseover="this.href='ma'+'ilto'+'\x3A'+'dge'+'\x40'+'cchs.csic.es'">Proyecto DGE (contacto)</a> – <a target="article" href="doc/licencia.html">Licencia</a> – <a target="_blank" href="http://www.csic.es/">CSIC</a>
+            <a href="#" onmouseover="this.href='ma'+'ilto'+'\x3A'+'dge'+'\x40'+'cchs.csic.es'">Proyecto DGE (contacto)</a> – <a target="article" href="licencia">Licencia</a> – <a target="_blank" href="http://www.csic.es/">CSIC</a>
             <div>
         </footer>
     </div>
-    <script src="<?= Route::home_href() ?>theme/xdge.js">//</script>
     <script>
 const form = document.forms['lemmas'];
 form.form.value = '<?= $form ?>';
+/*
 form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+*/
     </script>
+    <script src="<?= Route::home_href() ?>theme/xdge.js">//</script>
 </body>
 
 </html>

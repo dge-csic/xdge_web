@@ -1,6 +1,65 @@
 'use strict';
 
-
+const lat_grc = {
+    "A": "Α",
+    "a": "α",
+    "B": "Β",
+    "b": "β",
+    "C": "Ξ",
+    "c": "ξ",
+    "D": "Δ",
+    "d": "δ",
+    "E": "Ε",
+    "e": "ε",
+    "Ê": "Η",
+    "ê": "η",
+    "é": "η",
+    "è": "η",
+    "F": "Φ",
+    "f": "φ",
+    "G": "Γ",
+    "g": "γ",
+    "H": "Η",
+    "h": "η",
+    "I": "Ι",
+    "i": "ι",
+    "J": "Σ",
+    "j": "ς",
+    "K": "Κ",
+    "k": "κ",
+    "L": "Λ",
+    "l": "λ",
+    "M": "Μ",
+    "m": "μ",
+    "N": "Ν",
+    "n": "ν",
+    "O": "Ο",
+    "o": "ο",
+    "Ô": "Ω",
+    "ô": "ω",
+    "P": "Π",
+    "p": "π",
+    "Q": "Θ",
+    "q": "θ",
+    "R": "Ρ",
+    "r": "ρ",
+    "S": "Σ",
+    "s": "σ",
+    "T": "Τ",
+    "t": "τ",
+    "U": "Υ",
+    "u": "υ",
+    "V": "Υ",
+    "v": "υ",
+    "w": "ω",
+    "W": "Ω",
+    "x": "χ",
+    "X": "Χ",
+    "y": "ψ",
+    "Y": "Ψ",
+    "Z": "Ζ",
+    "z": "ζ"
+};
 
 /**
  * Toolkit for ajax around a form
@@ -305,8 +364,7 @@ class Formajax {
         suggest.style.display = 'block';
     }
 
-    static loadHtml(div, url, append = false)
-    {
+    static loadHtml(div, url, append = false) {
         if (!url) return; // log an error ?
         if (!div) return; // disappeared ?
         if (!append) {
@@ -340,14 +398,22 @@ class Formajax {
 };
 
 // init lemma column
-(function() {
+(function () {
+    function latGrc(text) {
+        const chars = text.split('');
+        for (let i = 0, len = text.length; i < len; i++) {
+            let c = lat_grc[chars[i]];
+            if (c) chars[i] = c;
+        }
+        return chars.join('');
+    }
     const form = document.forms['lemmas'];
     if (!form) return;
     const lemmas = document.getElementById('lemmas');
     // no div to populate.
     if (!lemmas) return;
-    const article =  document.getElementById('article');
-    if (!article) return;
+    const main = document.getElementById('main');
+    if (!main) return;
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const url = form.action + "?" + Formajax.formQuery(form);
@@ -356,8 +422,11 @@ class Formajax {
     }, true);
     // send submit when suggest change
     form.form.addEventListener('input', (e) => {
+        form.form.value = latGrc(form.form.value);
         form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
     }, true);
+    // onload, lemmas
+    form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
     // attach event to lemmas container
     lemmas.addEventListener('click', (e) => {
         let a = Formajax.selfOrAncestor(e.target, 'a');
@@ -368,37 +437,30 @@ class Formajax {
         const lemma = a.getAttribute('href');
         const url = 'article/' + lemma;
         window.history.pushState({}, '', lemma);
-        Formajax.loadHtml(article, url);
+        Formajax.loadHtml(main, url);
+    });
+    const indicar = document.getElementById('indicar');
+    if (!indicar) return; // ??
+    const inverso = document.getElementById('inverso');
+    if (!inverso) return; // ??
+    indicar.addEventListener('click', (e) => {
+        e.preventDefault();
+        inverso.classList.remove("active");
+        indicar.classList.add("active");
+        form.classList.remove("inverso");
+        lemmas.classList.remove("inverso");
+        form.inverso.value = null;
+        form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+        return false;
+    });
+    inverso.addEventListener('click', (e) => {
+        e.preventDefault();
+        indicar.classList.remove("active");
+        inverso.classList.add("active");
+        form.classList.add("inverso");
+        lemmas.classList.add("inverso");
+        form.inverso.value = true;
+        form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+        return false;
     });
 })();
-
-/**
- * Behaviours of tabs
- */
-function tab(a) {
-    // desactivate last tab and hilite current
-    var indicar = document.getElementById('indicar');
-    if (indicar) indicar.className = "";
-    var inverso = document.getElementById('inverso');
-    if (inverso) inverso.className = "";
-    a.className = "active";
-    // inform server a new tab has been chosen
-    Cookie.set("tab", a.id);
-    // input, be careful to IE id model, use var
-    var q = document.getElementById('q');
-    if (!q) return;
-    if (a.id == 'inverso') {
-        q.className = "inverso";
-    }
-    else {
-        // was inverso, reverse it
-        q.className = "";
-    }
-    a.href = a.href.replace(/\/[^\/\?]*$/, '/' + q.value);
-    if (!a.target) return true;
-    window.frames[a.target].location.replace(a.href);
-    return false;
-}
-/**
- * Load lemmas in nav column
- */

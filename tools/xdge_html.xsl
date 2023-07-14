@@ -351,11 +351,11 @@ Transform XDGE in html.
   <!-- usage mark -->
   <xsl:template match="tei:usg">
     <xsl:param name="mode"/>
-    <label class="usg">
+    <span class="usg">
       <xsl:apply-templates>
         <xsl:with-param name="mode" select="$mode"/>
       </xsl:apply-templates>
-    </label>
+    </span>
   </xsl:template>
   <!-- foreign word -->
   <xsl:template match="tei:foreign">
@@ -397,7 +397,7 @@ Transform XDGE in html.
     <xsl:variable name="class" select="normalize-space(concat(local-name(), ' ', @type))"/>
     <section class="{$class}">
       <div>
-        <label>
+        <span>
           <xsl:choose>
             <xsl:when test="self::tei:etym">Etimología</xsl:when>
             <xsl:when test="@type='alolema'">Alolema(s)</xsl:when>
@@ -405,7 +405,7 @@ Transform XDGE in html.
             <xsl:when test="@type='prosodia'">Prosodia</xsl:when>
             <xsl:when test="@type='morfologia'">Morfología</xsl:when>
           </xsl:choose>
-        </label>
+        </span>
         <xsl:text>: </xsl:text>
         <xsl:apply-templates/>
       </div>
@@ -417,9 +417,9 @@ Transform XDGE in html.
     </div>
   </xsl:template>
   <xsl:template match="tei:bibl[@type='dmic']/tei:title">
-    <label>
+    <span>
       <xsl:apply-templates/>
-    </label>
+    </span>
   </xsl:template>
   <xsl:template match="tei:title">
     <cite>

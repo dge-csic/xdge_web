@@ -159,6 +159,7 @@ sub {
  * Entry
  */
 
+article.text,
 article.entry {
     margin-bottom: 1rem;
     width: 40em;
