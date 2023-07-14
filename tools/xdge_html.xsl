@@ -111,7 +111,7 @@ Transform XDGE in html.
               <xsl:apply-templates select="tei:sense | tei:dictScrap"/>
             </div>
           </xsl:if>
-          <xsl:if test="node()[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]">
+          <xsl:if test="*[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]">
             <footer>
               <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]"/>
             </footer>

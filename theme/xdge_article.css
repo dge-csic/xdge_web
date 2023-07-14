@@ -370,13 +370,18 @@ form * {
 
 
 
-article.entry>footer,
 header>.form,
 article.entry>.bibl,
 article.entry>.etym {
     padding: 0.3rem 0.7rem;
+    border-bottom: 2px solid var(--bg);
+}
+
+article.entry>footer {
+    padding: 0.3rem 0.7rem;
     border-top: 2px solid var(--bg);
 }
+
 
 header>div.form1 {
     border-top: none;
