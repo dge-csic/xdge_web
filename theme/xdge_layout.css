@@ -1,9 +1,34 @@
 :root {
-    --left_width: 270px;
+    --left_width: 20rem;
+    --framing: 1.2rem;
 }
 
 * {
     box-sizing: border-box;
+}
+
+@media (min-width: 992px) {
+    html {
+        font-size: 13pt;
+    }
+}
+
+@media (min-width: 1200px) {
+    html {
+        font-size: 15pt;
+    }
+}
+
+@media (min-width: 1500px) {
+    html {
+        font-size: 17pt;
+    }
+}
+
+@media (min-width: 2000px) {
+    html {
+        font-size: 25pt;
+    }
 }
 
 #win {
@@ -13,27 +38,26 @@
     justify-content: space-between;
     margin: 0;
     background-color: #FFFFFF;
-    background-image: linear-gradient(to right, #FFFFFF, var(--bg_soft) 292px, #353b90);
-    padding: 22px 22px 0 22px;
+    background-image: linear-gradient(to right, #FFFFFF, var(--bg_soft) 21.2rem, #353b90);
+    padding: var(--framing) var(--framing) 0 var(--framing);
     position: relative;
 }
 
 #middle {
     display: flex;
-    width: 100%;
-    background-color: var(--bg_soft);
-    height: calc(100vh - 113px);
+    justify-content: center;
+    height: calc(100vh - 6rem);
     flex-grow: 0;
     flex-shrink: 0;
     position: relative;
 }
 
 #left {
+    display: flex;
+    flex-direction: column;
     width: var(--left_width);
     border-left: 1px var(--border) solid;
     border-bottom: 1px var(--border) solid;
-    display: flex;
-    flex-direction: column;
     position: relative;
     color: #333333;
     padding: 0;
@@ -59,7 +83,6 @@
 #lemmas {
     /* lemmas suggestion */
     height: 100%;
-    background-color:var(--bg_soft);
     overflow-y: scroll;
 }
 
@@ -67,23 +90,41 @@
     text-align: right;
 }
 
-/*
-#lemmas::-webkit-scrollbar {
+*::-webkit-scrollbar {
     width: 18px;
+}
+* {
+    scrollbar-width: thin;
 }
 
 #lemmas::-webkit-scrollbar-track {
     background: var(--bg);
 }
 
+
 #lemmas {
-    scrollbar-color: var(--bg_marg) var(--bg);
+    scrollbar-color: var(--border) transparent;
 }
-*/
+
+#main {
+    overflow-y: scroll;
+    scrollbar-color: rgba(255, 255, 255, 0.5) var(--border) ;
+    height: 100%;
+}
 
 #right {
+    flex-basis: 50em;
+}
+
+article.entry {
     width: 100%;
+}
+
+#right {
+    display: flex;
+    flex-direction: column;
     border-bottom: 1px var(--border) solid;
+    padding: 0;
 }
 
 #middle>* {
@@ -92,7 +133,7 @@
 
 #header {
     position: relative;
-    height: 70px;
+    height: 3rem;
     flex-grow: 0;
     flex-shrink: 0;
 }
@@ -115,23 +156,24 @@
 
 
 .tabs {
-    height: 22px;
+    height: 1.5rem;
     border-bottom: 1px var(--border) solid;
-    font-size: 13px;
+    font-size: 1;
 }
 
 .tabs a {
+    font-size: 0.85rem;
     cursor: pointer;
     border: 1px transparent solid;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
-    height: 22px;
+    height: 1.5rem;
     display: block;
     float: left;
     white-space: nowrap;
     /* avoid line-height, the px between Chrome and Firefox */
     text-decoration: none;
-    padding: 0 1ex 5px 1ex;
+    padding: 0 0.5rem 0.3rem 0.5rem;
     color: #666666 !important;
     /* margin-bottom: -1px; */
 }
@@ -151,12 +193,6 @@
     border-bottom: 1px solid var(--bg);
 }
 
-#main {
-    overflow: auto;
-    height: 100%;
-}
-
-
 #header .grad a {
     color: #FFFFFF;
 }
@@ -171,8 +207,8 @@
 }
 
 #footer {
-    height: 22px;
-    font-size: 12px;
+    height: var(--framing);
+    font-size: 0.85rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -191,14 +227,14 @@
     top: 0;
     display: flex;
     color: #fff;
-    font-size: 22px;
-    line-height: 22px;
+    font-size: 120%;
+    line-height: 100%;
     font-family: var(--serif);
 }
 
 #header>.left {
-    font-size: 22px;
-    line-height: 22px;
+    font-size: 120%;
+    line-height: 100%;
     font-family: var(--serif);
     color: #353b90;
 }
@@ -226,7 +262,7 @@
     text-decoration: none;
     background: #FFFFFF;
     font-weight: inherit;
-    color: #B9121B;
+    color: var(--rubric);
 }
 
 article.text {
@@ -234,4 +270,10 @@ article.text {
     width: 40em;
     background-color: var(--bg);
     padding: 1rem;
+}
+
+nav.entry-nav {
+    max-height: calc(100vh - 6.4rem);
+    color: #fff;
+    overflow: hidden;
 }

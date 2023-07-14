@@ -26,16 +26,6 @@ $home_href = Route::home_href();
             <div class="left">
                 <a target="_top" href="."><i>DGE</i> en línea</a>
             </div>
-            <div class="tabs" id="tabs-left">
-                <a title="Lista alfabética de los lemas" id="indicar" class="<?=($tab != 'indicar')?'':'active'?>">Lemas</a>
-                <a title="Lista de los lemas ordenados por su terminación" id="inverso" class="<?=($tab == 'inverso')?'active':''?>">Inverso</a>
-            </div>
-            <div class="tabs" id="tabs-right">
-                <a href="http://dge.cchs.csic.es/lst/lst4.htm" target="_new" title="Abreviaturas empleadas en el DGE">Abreviaturas</a>
-                <a href="http://dge.cchs.csic.es/lst/lst-int.htm" target="_new" title="Listas de ediciones de referencia y de abreviaturas empleadas en el DGE">Listas</a>
-                <a target="article" href="creditos" title="Créditos y agradecimientos">Créditos</a>
-
-            </div>
             <div class="right">
                 <a href="http://dge.cchs.csic.es/">Diccionario<br />Griego–Español</a>
                 <a href="http://dge.cchs.csic.es/"><img src="<?= Route::home_href() ?>theme/dge_64.png" /></a>
@@ -43,6 +33,10 @@ $home_href = Route::home_href();
         </header>
         <div id="middle">
             <div id="left">
+                <div class="tabs">
+                    <a title="Lista alfabética de los lemas" id="indicar" class="<?=($tab != 'indicar')?'':'active'?>">Lemas</a>
+                    <a title="Lista de los lemas ordenados por su terminación" id="inverso" class="<?=($tab == 'inverso')?'active':''?>">Inverso</a>
+                </div>
                 <form name="lemmas" action="lemmas.php">
                     <input name="form" id="form"/>
                     <input type="hidden" name="inverso"/>
@@ -52,6 +46,12 @@ $home_href = Route::home_href();
                 </div>
             </div>
             <div id="right">
+            <div class="tabs">
+                <a href="http://dge.cchs.csic.es/lst/lst4.htm" target="_new" title="Abreviaturas empleadas en el DGE">Abreviaturas</a>
+                <a href="http://dge.cchs.csic.es/lst/lst-int.htm" target="_new" title="Listas de ediciones de referencia y de abreviaturas empleadas en el DGE">Listas</a>
+                <a target="article" href="creditos" title="Créditos y agradecimientos">Créditos</a>
+
+            </div>
                 <main id="main">
                     <?= Route::main() ?>
                 </main>

@@ -57,6 +57,8 @@ Transform XDGE in html.
   </xsl:template>
   <!-- Nothing done with that for now -->
   <xsl:template match="tei:lcStart | tei:lcEnd | tei:llccStart | tei:llccEnd | tei:addStart | tei:addEnd | tei:delStart | tei:delEnd  "/>
+  <!-- Some words to delete in bibl resolution -->
+  <xsl:template match="tei:del"/>
   <!-- Header, one day -->
   <xsl:template match="tei:teiHeader"/>
   <!-- Cross -->
@@ -103,12 +105,15 @@ Transform XDGE in html.
             <xsl:call-template name="id"/>
           </xsl:attribute>
           <xsl:apply-templates select="tei:form"/>
-          <div class="body">
-            <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:etym)][not(self::tei:bibl)]"/>
-          </div>
-          <xsl:if test="tei:bibl | tei:etym">
+          <xsl:variable name="body"/>
+          <xsl:if test="tei:sense | tei:dictScrap">
+            <div class="body">
+              <xsl:apply-templates select="tei:sense | tei:dictScrap"/>
+            </div>
+          </xsl:if>
+          <xsl:if test="node()[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]">
             <footer>
-              <xsl:apply-templates select="tei:bibl | tei:etym"/>
+              <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]"/>
             </footer>
           </xsl:if>
         </article>
@@ -213,6 +218,11 @@ Transform XDGE in html.
   <xsl:template match="tei:num">
     <xsl:text> </xsl:text>
     <xsl:choose>
+      <xsl:when test="ancestor::tei:biblScope">
+        <span class="num">
+          <xsl:apply-templates/>
+        </span>
+      </xsl:when>
       <xsl:when test=". = ';'">
         <b class="num">•</b>
       </xsl:when>
