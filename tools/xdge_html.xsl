@@ -125,7 +125,7 @@ Transform XDGE in html.
   <!-- -->
   <xsl:template match="tei:sense" mode="toc">
     <li class="sense">
-      <a>
+      <a class="sense">
         <xsl:attribute name="href">
           <xsl:text>#</xsl:text>
           <xsl:call-template name="id"/>
@@ -244,7 +244,7 @@ Transform XDGE in html.
           <xsl:otherwise>
             <xsl:value-of select="@target"/>
           </xsl:otherwise>
-        </xsl:choose>        
+        </xsl:choose>
       </xsl:attribute>
       <xsl:apply-templates/>
     </a>

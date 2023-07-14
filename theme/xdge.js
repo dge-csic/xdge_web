@@ -439,6 +439,19 @@ class Formajax {
         window.history.pushState({}, '', lemma);
         Formajax.loadHtml(main, url);
     });
+    // for article, active toc  
+    main.addEventListener('click', (e) => {
+        const a = Formajax.selfOrAncestor(e.target, 'a');
+        if (!a || !a.classList.contains('sense')) {
+            // not a link in toc
+            return false; 
+        }
+        if (document.lastEntryToc) {
+            document.lastEntryToc.classList.remove('active');
+        }
+        a.classList.add('active');
+        document.lastEntryToc = a;
+    });
     const indicar = document.getElementById('indicar');
     if (!indicar) return; // ??
     const inverso = document.getElementById('inverso');

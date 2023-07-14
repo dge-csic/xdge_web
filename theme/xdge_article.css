@@ -170,7 +170,7 @@ article.entry {
     border-right: 1rem solid var(--bg_soft);
     */
     background-color: var(--bg_soft);
-    padding: 0rem 1rem 2rem 1rem;
+    padding: 0rem 0 2rem 1rem;
 }
 
 nav.prevnext {
@@ -215,7 +215,7 @@ div.row {
 nav.entry-nav {
     position: sticky;
     top: 0;
-    max-height: 100vh;
+    max-height: calc(100vh - 114px);
     overflow-y: auto;
     font-size: 0.85rem;
     flex: 0 0 15rem;
@@ -271,6 +271,7 @@ nav.entry-nav ul ul ul ul ul ul a {
     padding-left: 6rem;
 }
 
+nav.entry-nav a.active,
 nav.entry-nav a:hover {
     background-color: var(--bg);
 }
