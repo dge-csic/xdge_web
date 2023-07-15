@@ -121,7 +121,6 @@
     width: 55rem;
     height: calc(100vh - 7rem);
     overflow: auto;
-    scrollbar-color: rgba(255, 255, 255, 0.5) var(--border) ;
     position: relative;
     border-right: 1px var(--border) solid;
 }
@@ -193,7 +192,7 @@ div.entrywrap > article {
     /* avoid line-height, the px between Chrome and Firefox */
     text-decoration: none;
     padding: 0 0.5rem 0.3rem 0.5rem;
-    color: #666666 !important;
+    color: var(--border);
     /* margin-bottom: -1px; */
 }
 

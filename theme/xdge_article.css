@@ -5,7 +5,7 @@
     --rubric: hsl(357, 82%, 40%);
     --trad: hsl(236, 46%, 50%);
     --royal: hsl(236, 46%, 39%);
-    --border: hsl(357, 82%, 40%);
+    --border: #888;
     --marker: #aaa;
     --bg: #fff;
     --bg_marg: #DDD;
@@ -81,6 +81,7 @@
     font-stretch: 62.5% 100%;
 }
 
+
 html,
 body {
     height: 100%;
@@ -89,9 +90,11 @@ body {
     padding: 0;
 }
 
-html {
+body {
     font-family: var(--sans-serif);
+    line-height: 1.3rem;
 }
+
 
 /* Default html */
 
@@ -264,10 +267,6 @@ nav.toc a:hover {
     color: var(--text);
 }
 
-section.sense.active {
-    border-left: 2px solid var(--border);
-}
-
 .usg {
     /*
     font-stretch: condensed;
@@ -302,32 +301,53 @@ q[lang="grc"] {
 /* Espacements et alignments des <sense> */
 
 section.sense {
-    text-indent: -1.6rem;
     margin: 0.2rem 0.2rem 0.5rem 1.1rem;
-    padding: 0rem 0 0 0.4rem;
+    padding: 0rem 0 0 0.5rem;
     position: relative;
-    /* Si on change l’in */
-    /*
     border-left: 1px solid var(--bg_soft);
+    /*
     background-color: var(--bg);
     background: linear-gradient(to right, var(--bg), var(--bg_soft) 3rem, var(--bg_soft) 60%, var(--bg));
     */
 }
 
+/* numbering of senses */
+
+section.sense>b.pc,
+section.sense>b.num {
+    position: absolute;
+    left: -1.5rem;
+    width: 1.5rem;
+    text-align: center;
+    display: inline-block;
+    text-indent: 0;
+    line-height: inherit;
+    font-size: 85%;
+    font-weight: bold;
+}
+
+section.sense>b.pc {
+    color: transparent;
+}
+section.sense>b.pc::before {
+    position: absolute;
+    left: 0.5rem;
+    text-indent: 0;
+    box-sizing: border-box;
+    content: '✦';
+    font-size: 80%;
+    color: var(--rubric);
+}
+
+
+.sense>b.num {
+    color: var(--text_soft);
+}
+*/
+
+
 section.sense div,
 section.sense p {
-    text-indent: 0;
-}
-
-pc+* {
-    padding-left: 1.5rem;
-}
-
-pc+cit {
-    padding-left: 0;
-}
-
-cit {
     text-indent: 0;
 }
 
@@ -400,42 +420,7 @@ a.ref .num {
 }
 
 
-/* numbering of senses */
 
-section.sense>b.pc,
-section.sense>b.num {
-    display: block;
-    float: left;
-    width: 1.5rem;
-    font-size: 85%;
-    font-weight: bold;
-}
-
-.sense>b.num {
-    color: var(--text_soft);
-}
-
-
-/*
-section.sense>.num::before {
-    display: inline-block;
-    width: 1.6rem;
-    background-color: var(--bg);
-}
-*/
-
-b.pc {
-    color: transparent;
-}
-
-.pc::before {
-    position: absolute;
-    content: '✦';
-    font-size: 80%;
-    padding-left: 0.2rem;
-    color: var(--rubric);
-    display: block;
-}
 
 .orth {
     color: var(--rubric);
