@@ -96,27 +96,30 @@ Transform XDGE in html.
     </nav>
     <xsl:text>&#10;        </xsl:text>
   </xsl:template>
+  <xsl:template name="entry">
+    <article class="entry {@type}">
+      <xsl:attribute name="id">
+        <xsl:call-template name="id"/>
+      </xsl:attribute>
+      <xsl:apply-templates select="tei:form"/>
+      <xsl:variable name="body"/>
+      <xsl:if test="tei:sense | tei:dictScrap">
+        <div class="body">
+          <xsl:apply-templates select="tei:sense | tei:dictScrap"/>
+        </div>
+      </xsl:if>
+      <xsl:if test="*[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]">
+        <footer>
+          <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]"/>
+        </footer>
+      </xsl:if>
+    </article>
+  </xsl:template>
   <xsl:template match="tei:entry">
     <div class="entry-cont">
       <xsl:call-template name="prevnext"/>
       <div class="row">
-        <article class="entry {@type}">
-          <xsl:attribute name="id">
-            <xsl:call-template name="id"/>
-          </xsl:attribute>
-          <xsl:apply-templates select="tei:form"/>
-          <xsl:variable name="body"/>
-          <xsl:if test="tei:sense | tei:dictScrap">
-            <div class="body">
-              <xsl:apply-templates select="tei:sense | tei:dictScrap"/>
-            </div>
-          </xsl:if>
-          <xsl:if test="*[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]">
-            <footer>
-              <xsl:apply-templates select="node()[not(self::tei:form)][not(self::tei:sense)][not(self::tei:dictScrap)]"/>
-            </footer>
-          </xsl:if>
-        </article>
+        <xsl:call-template name="entry"/>
         <nav class="entry-nav">
           <xsl:if test="tei:sense[tei:num]">
             <ul>

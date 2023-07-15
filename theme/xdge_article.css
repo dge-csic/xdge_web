@@ -1,10 +1,11 @@
 @namespace xml url('http://www.w3.org/XML/1998/namespace');
+
 :root {
     /* des variables globales */
-    --rubric: #B9121B;
+    --rubric: hsl(357, 82%, 40%);
     --trad: hsl(236, 46%, 50%);
     --royal: hsl(236, 46%, 39%);
-    --border: #7698C9;
+    --border: hsl(357, 82%, 40%);
     --marker: #aaa;
     --bg: #fff;
     --bg_marg: #DDD;
@@ -53,20 +54,28 @@
 }
 
 @font-face {
-    font-display: swap;
     font-family: "Noto Sans";
     font-style: normal;
-    src: url("./fonts/NotoSansDisplay-VariableFont_wdth,wght.ttf");
+    font-display: swap;
+    src: local('Noto Sans'),
+        url('./fonts/NotoSansDisplay-VariableFont_wdth,wght.woff2') 
+        format('woff2'),
+        url('./fonts/NotoSansDisplay-VariableFont_wdth,wght.ttf')
+        format('truetype');
     /* cf. spec font https://fonts.google.com/variablefonts */
     font-weight: 100 900;
     font-stretch: 62.5% 100%;
 }
 
 @font-face {
-    font-display: swap;
     font-family: "Noto Sans";
     font-style: italic;
-    src: url("./fonts/NotoSansDisplay-Italic-VariableFont_wdth,wght.ttf");
+    font-display: swap;
+    src: local('Noto Sans'),
+        url('./fonts/NotoSansDisplay-Italic-VariableFont_wdth,wght.woff2') 
+        format('woff2'),
+        url('./fonts/NotoSansDisplay-Italic-VariableFont_wdth,wght.ttf')
+        format('truetype');
     /* cf. spec font https://fonts.google.com/variablefonts */
     font-weight: 100 900;
     font-stretch: 62.5% 100%;
@@ -148,11 +157,6 @@ sub {
     font-weight: normal !important;
 }
 
-:-ms-input-placeholder {
-    color: #CCC !important;
-    font-style: italic !important;
-    font-weight: normal !important;
-}
 
 /** 
  * Entry
@@ -161,13 +165,6 @@ sub {
 article.text,
 article.entry {
     margin-bottom: 1rem;
-    /*
-    border-top: 2rem solid var(--bg_soft);
-    border-bottom: 2rem solid var(--bg_soft);
-    border-left: 1rem solid var(--bg_soft);
-    border-right: 1rem solid var(--bg_soft);
-    */
-    background-color: var(--bg_soft);
     padding: 0;
 }
 
@@ -211,28 +208,19 @@ div.row {
     position: relative;
 }
 
-nav.entry-nav {
-    position: sticky;
-    top: 0;
+nav.toc {
     overflow-y: auto;
     font-size: 0.85rem;
-    flex: 0 0 15rem;
     font-weight: 300;
-    /*
-    height: calc(100vh - 48px);
-    order: -1;
-    padding-left: 0;
-    padding-right: 0;
-    */
 }
 
-nav.entry-nav ul {
+nav.toc ul {
     list-style: none;
     padding-left: 0;
     margin-left: 0;
 }
 
-nav.entry-nav a {
+nav.toc a {
     display: block;
     text-decoration: none;
     line-height: 105%;
@@ -240,38 +228,38 @@ nav.entry-nav a {
     color: inherit;
 }
 
-nav.entry-nav a>* {
+nav.toc a>* {
     color: inherit;
     font-weight: inherit;
     font-size: inherit;
 }
 
-nav.entry-nav ul a {
+nav.toc ul a {
     padding-left: 1rem;
 }
 
-nav.entry-nav ul ul a {
+nav.toc ul ul a {
     padding-left: 2rem;
 }
 
-nav.entry-nav ul ul ul a {
+nav.toc ul ul ul a {
     padding-left: 3rem;
 }
 
-nav.entry-nav ul ul ul ul a {
+nav.toc ul ul ul ul a {
     padding-left: 4rem;
 }
 
-nav.entry-nav ul ul ul ul ul a {
+nav.toc ul ul ul ul ul a {
     padding-left: 5rem;
 }
 
-nav.entry-nav ul ul ul ul ul ul a {
+nav.toc ul ul ul ul ul ul a {
     padding-left: 6rem;
 }
 
-nav.entry-nav a.active,
-nav.entry-nav a:hover {
+nav.toc a.active,
+nav.toc a:hover {
     background-color: var(--bg);
     color: var(--text);
 }
@@ -346,6 +334,7 @@ cit {
 article.entry>footer,
 article.entry>header {
     font-weight: 200;
+    background-color: var(--bg_soft);
 }
 
 
@@ -388,10 +377,10 @@ header>div.form1 {
 }
 
 
-.def>i,
-i>i,
-.q>i,
-.title>i {
+.entry .def>i,
+.entry i>i,
+.entry .q>i,
+.entry .title>i {
     font-style: normal;
     font-family: var(--sans-serif);
     color: var(--text);

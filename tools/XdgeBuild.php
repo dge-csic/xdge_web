@@ -71,12 +71,15 @@ class XdgeBuild
             lemma,
             label,
             html,
+            toc,
+
+            prevnext,
             form,
             monoton,
             latin,
             inverso
         )
-        VALUES (?,?,?,?, ?,?,?,?);");
+        VALUES (?,?,?,?,?,  ?,?,?,?,?);");
         // self::$insSearch = self::$pdo->prepare("INSERT INTO search VALUES (?,?,?,?,?,?,?,?);");
 
         $proc = new XSLTProcessor();
@@ -111,11 +114,11 @@ class XdgeBuild
     }
 
     /** Insert an entry, method is called by xsl transformation */
-    static function entry($xmlid, $lemma, $label, $html, $text)
+    static function entry($xmlid, $lemma, $label, $html, $toc, $prevnext, $txt)
     {
-        $text = self::xml($text, true);
-        // precaution, convert modern greek accentued letter to old greek
-        $lemma = strtr(trim($lemma), self::$el_grc_tr);
+        $txt = self::xml($txt, true);
+        // NO modern-old greek translit, XML should be good
+        $lemma = trim($lemma);
         $form = strtr($lemma, self::$orth_tr);
         // normalize lemma for access, punctuation and diacritics
         // $monoton = strtr($form, self::$grc_tr);
@@ -129,11 +132,15 @@ class XdgeBuild
     if (isset($matches[1])) $monoton.=$matches[1];
     */
         $html = self::xml($html);
+        $toc = self::xml($toc);
+        $prevnext = self::xml($prevnext);
         self::$insEntry->execute(array(
             $xmlid,
             $lemma,
             self::xml($label, true),
             $html,
+            $toc,
+            $prevnext,
             $form,
             $monoton,
             $latin,

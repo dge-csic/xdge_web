@@ -13,12 +13,14 @@ class Article {
     public static $form;
     /** article id recalled */
     public static $lemma;
-    /** article html */
-    public static $html;
+    /** articles */
+    public static $res;
     /** init static paras */
     public static function init() {
         self::$form = Http::par('form');
-        self::$html = Xdge::article(self::$form);
+        self::$res = Xdge::article(self::$form);
+        // if no article found -> 404
+        if (!self::$res) return false;
     }
 }
 Article::init();
@@ -35,7 +37,18 @@ $main = function() {
         $html = $hi->hi($html);
     }
     */
-    return Article::$html;
+    if (!is_array(Article::$res) || !count(Article::$res)) {
+        // not found ?
+        return false;
+    }
+    foreach(Article::$res as $row) {
+        echo "<div class=\"entrywrap\">\n";
+        echo $row['html'];
+        echo "  <nav class=\"toc\">\n";
+        echo $row['toc'];
+        echo "  </nav>\n";
+        echo "</div>\n";
+    }
 };
 
 // for debug, direct call

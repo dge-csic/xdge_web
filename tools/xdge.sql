@@ -2,8 +2,10 @@ CREATE TABLE entry (
     rowid               INTEGER, -- rowid auto
     xmlid  TEXT UNIQUE NOT NULL, -- entry/@xml:id
     lemma         TEXT NOT NULL, -- *Ἀhεριγος
-    label         TEXT NOT NULL, -- *Ἀhεριγ<sup>u̯</sup>ος
-    html          TEXT NOT NULL, -- displayable entry
+    label         BLOB NOT NULL, -- *Ἀhεριγ<sup>u̯</sup>ος
+    html          BLOB NOT NULL, -- displayable entry
+    toc                    BLOB, -- displayable entry
+    prevnext      BLOB NOT NULL, -- displayable entry
     form          TEXT NOT NULL, -- lemma without ponctuation
     monoton       TEXT NOT NULL, -- lemma without diacritics
     latin         TEXT NOT NULL, -- latin script version of the lemma

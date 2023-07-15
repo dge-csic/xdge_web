@@ -16,6 +16,8 @@ $home_href = Route::home_href();
 <head>
     <meta charset="utf-8" />
     <title><?= Route::title() ?></title>
+    <link rel="preload" as="font" href="<?= Route::home_href() ?>theme/fonts/NotoSansDisplay-Italic-VariableFont_wdth,wght.woff2" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" as="font" href="<?= Route::home_href() ?>theme/fonts/NotoSansDisplay-VariableFont_wdth,wght.woff2" type="font/woff2" crossorigin="anonymous">
     <link rel="stylesheet" href="theme/xdge_article.css" />
     <link rel="stylesheet" href="theme/xdge_layout.css" />
 </head>
@@ -36,6 +38,7 @@ $home_href = Route::home_href();
                 <div class="tabs">
                     <a title="Lista alfabética de los lemas" id="indicar" class="<?=($tab != 'indicar')?'':'active'?>">Lemas</a>
                     <a title="Lista de los lemas ordenados por su terminación" id="inverso" class="<?=($tab == 'inverso')?'active':''?>">Inverso</a>
+                    <div class="filler"></div>
                 </div>
                 <form name="lemmas" action="lemmas.php">
                     <input name="form" id="form"/>
@@ -50,7 +53,7 @@ $home_href = Route::home_href();
                 <a href="http://dge.cchs.csic.es/lst/lst4.htm" target="_new" title="Abreviaturas empleadas en el DGE">Abreviaturas</a>
                 <a href="http://dge.cchs.csic.es/lst/lst-int.htm" target="_new" title="Listas de ediciones de referencia y de abreviaturas empleadas en el DGE">Listas</a>
                 <a target="article" href="creditos" title="Créditos y agradecimientos">Créditos</a>
-
+                <div class="filler"></div>
             </div>
                 <main id="main">
                     <?= Route::main() ?>

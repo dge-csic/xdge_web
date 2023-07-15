@@ -34,8 +34,7 @@
   <!-- Process doc for column data, tei:form/tei:orth[@type='lemma'] -->
   <xsl:template match="tei:entry" mode="sql">
     <xsl:variable name="html">
-      <!-- ensure one root element -->
-      <xsl:apply-templates select="."/>
+      <xsl:call-template name="entry"/>
     </xsl:variable>
     <xsl:variable name="lemma">
       <xsl:apply-templates select="tei:form[1]/tei:orth[@type='lemma'][1]" mode="txt"/>
@@ -51,9 +50,28 @@
         <xsl:apply-templates mode="txt"/>
       </div>
     </xsl:variable>
-    <xsl:copy-of select="$txt"/>
+    <xsl:variable name="toc">
+      <xsl:if test="tei:sense[tei:num]">
+        <ul class="entry-toc">
+          <xsl:apply-templates mode="toc" select="tei:sense[tei:num]"/>
+        </ul>
+      </xsl:if>
+    </xsl:variable>
+    <xsl:variable name="prevnext">
+      <xsl:call-template name="prevnext"/>
+    </xsl:variable>
+    
     <xsl:if test="function-available('php:function')">
-      <xsl:variable name="entry" select="php:function('XdgeBuild::entry', string(@xml:id), string($lemma),  exslt:node-set($label) , exslt:node-set($html), exslt:node-set($txt))"/>
+      <xsl:variable name="entry" select="php:function(
+        'XdgeBuild::entry', 
+        string(@xml:id), 
+        string($lemma),  
+        exslt:node-set($label) ,
+        exslt:node-set($html),
+        exslt:node-set($toc),
+        exslt:node-set($prevnext),
+        exslt:node-set($txt)
+      )"/>
     </xsl:if>
     <!-- for now, no subpart indexed 
     <xsl:apply-templates mode="sql"/>

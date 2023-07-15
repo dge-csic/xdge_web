@@ -31,7 +31,9 @@ class Xdge
     /** a translitteration table to clean punctuation */
     static $orth_tr;
     /** a transliterration table to convert modern accentued greek in ancient  */
-    static $el_grc_tr;
+    // static $el_grc_tr;
+    /** a transliterration table to convert ancient accentued greek in modern  */
+    static $grc_el_tr;
 
     /** constructor */
     static public function init()
@@ -49,7 +51,8 @@ class Xdge
         self::$grc_lat_tr = json_decode(file_get_contents($dir . 'grc_lat.json'), true, 512, JSON_THROW_ON_ERROR);
         self::$lat_grc_tr = json_decode(file_get_contents($dir . 'lat_grc.json'), true, 512, JSON_THROW_ON_ERROR);
         self::$orth_tr =json_decode(file_get_contents($dir . 'orth.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$el_grc_tr = json_decode(file_get_contents($dir . 'el_grc.json'), true, 512, JSON_THROW_ON_ERROR);
+        // self::$el_grc_tr = json_decode(file_get_contents($dir . 'el_grc.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$grc_el_tr = json_decode(file_get_contents($dir . 'grc_el.json'), true, 512, JSON_THROW_ON_ERROR);
 
         if (!isset(self::$p['xdge_db']) ) {
             throw new Exception("Installation problem.<br/>
@@ -110,11 +113,34 @@ in your parameter file<br/>
         }
         return $sql;
     }
+
+    /** Get rowid from inverso */
+    static public function inversoRowid($form)
+    {
+        // convert ancient greek accentued letter to modern
+        $form = strtr($form, self::$grc_el_tr);
+        // strip punctuation
+        $form = strtr($form, self::$orth_tr);
+        // latin ? transliterate
+        $form = strtr($form, self::$lat_grc_tr);
+        $form = self::monoton($form);
+        // reverse form before searching
+        $form = implode(array_reverse(preg_split('//u', $form, -1, PREG_SPLIT_NO_EMPTY)));
+        $q = self::$pdo->prepare("SELECT rowid FROM inverso WHERE inverso >= ?  LIMIT 1");
+        $q->execute(array($form));
+        if ($rowid = $q->fetchColumn(0)) {
+            // no echo before DOCTYPE
+            // echo "<!-- inverso exact $form $rowid -->\n";
+            return $rowid;
+        }
+        return false;
+    }
+
     /** Get rowid of a form */
     static public function rowid($form)
     {
-        // convert modern greek accentued letter to old greek
-        $form = strtr($form, self::$el_grc_tr);
+        // convert ancient greek accentued letter to modern
+        $form = strtr($form, self::$grc_el_tr);
         // exact id ?
         $q = self::$pdo->prepare('select rowid FROM entry WHERE xmlid = ?');
         $q->execute(array($form));
@@ -148,46 +174,26 @@ in your parameter file<br/>
         return false;
     }
 
-    static public function inversoRowid($form)
-    {
-        // convert modern greek accentued letter to old greek
-        $form = strtr($form, self::$el_grc_tr);
-        // strip punctuation
-        $form = strtr($form, self::$orth_tr);
-        // latin ? transliterate
-        $form = strtr($form, self::$lat_grc_tr);
-        $form = self::monoton($form);
-        // reverse form before searching
-        $form = implode(array_reverse(preg_split('//u', $form, -1, PREG_SPLIT_NO_EMPTY)));
-        $q = self::$pdo->prepare("SELECT rowid FROM inverso WHERE inverso >= ?  LIMIT 1");
-        $q->execute(array($form));
-        if ($rowid = $q->fetchColumn(0)) {
-            // no echo before DOCTYPE
-            // echo "<!-- inverso exact $form $rowid -->\n";
-            return $rowid;
-        }
-        return false;
-    }
     /**
-     * Get an html article to display
+     * Get articles
      */
     static public function article($form)
     {
-        // convert modern Greek diacritics to old greek
-        $form = strtr($form, self::$el_grc_tr);
+        // convert ancient greek accentued letter to modern
+        $form = strtr($form, self::$grc_el_tr);
         // xmlid ?
-        if ($html = self::artquery("xmlid = ?", $form)) return $html;
+        if ($res = self::artquery("xmlid = ?", $form)) return $res;
         // lemma ?
-        if ($html = self::artquery("lemma = ?", $form)) return $html;
+        if ($res = self::artquery("lemma = ?", $form)) return $res;
         // without special signs ?
         $form = strtr($form, self::$orth_tr);
-        if ($html = self::artquery("form = ?", $form)) return $html;
-        // with no diacritics ?
+        if ($res = self::artquery("form = ?", $form)) return $res;
+        // with no diacritics?
         $form = self::monoton($form);
-        if ($html = self::artquery("monoton = ?", $form)) return $html;
-        // latin ?
-        if ($html = self::artquery("latin = ?", $form)) return $html;
-        return "<h1>$form?</h1>";
+        if ($res = self::artquery("monoton = ?", $form)) return $res;
+        // latin?
+        if ($res = self::artquery("latin = ?", $form)) return $res;
+        return null;
     }
     /**
      * display article 
@@ -197,24 +203,15 @@ in your parameter file<br/>
         $query = self::$pdo->prepare('SELECT count(*) FROM entry WHERE ' . $where);
         $query->execute(array($form));
         $count = $query->fetchColumn(0);
-        if ($count >= 1) {
-            $query = self::$pdo->prepare('SELECT html, xmlid, label FROM entry WHERE ' . $where);
-            $query->execute(array($form));
-            $html = "";
-            $menu = "";
-            $count = 0;
-            while ($row = $query->fetch()) {
-                $count++;
-                if ($count > 1) {
-                    $menu .= ', ';
-                    $html .= "\n\n<hr class=\"entry\"/>\n\n";
-                }
-                $menu .= '<a href="#' . $row[1] . '">' . $row[2] . '</a>';
-                $html .= '<a name="' . $row[1] . '"></a>' . $row[0] . "\n\n";
-            }
-            if ($count > 1) $menu = '<p class="menu">' . $menu . ".</p>\n\n";
-            else $menu = "";
-            return "<!-- $where $form : $count -->\n" . $menu . $html;
+        if ($count < 1) {
+            return false;
         }
+        $query = self::$pdo->prepare('SELECT html, toc, prevnext, xmlid, label FROM entry WHERE ' . $where);
+        $query->execute(array($form));
+        $res = [];
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $res[] = $row;
+        }
+        return $res;
     }
 }
