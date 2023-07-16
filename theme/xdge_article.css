@@ -99,10 +99,21 @@ body {
 /* Default html */
 
 /* Restore font-size inheritence */
+button,
 input,
 pre,
 table {
+    font-family: inherit;
     font-size: inherit;
+}
+
+button {
+    padding: 0;
+    line-height: inherit;
+    cursor: pointer;
+    text-transform: none;
+    overflow: visible;
+    -webkit-appearance: button;
 }
 
 /* Default tables with no cellspacing no cellpadding */
@@ -215,6 +226,7 @@ nav.toc {
     overflow-y: auto;
     font-size: 0.85rem;
     font-weight: 300;
+    padding-left: 0.5rem;
 }
 
 nav.toc ul {

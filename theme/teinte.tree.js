@@ -101,10 +101,36 @@ var Tree = {
         if (ul.nodeType != 1) ul = document.getElementById(ul);
         if (!ul) return false;
         if (!ul.classList.contains("tree")) return false;
-        var nodeset = ul.getElementsByTagName("li");
-        for (var i = 0; i < nodeset.length; i++) {
-            target = "";
-            li = nodeset[i];
+
+        var liSet = ul.getElementsByTagName("li");
+
+        // buttons expand/collapse all
+        const bar = document.createElement("div");
+        bar.className = "tree all";
+        const expand = document.createElement("button");
+        expand.textContent = '▼▼';
+        expand.className = "tree expand";
+        expand.addEventListener('click', (e) => {
+            for (let i = 0, len = liSet.length; i < len; i++) {
+                Tree.open(liSet[i]);
+            }
+        });
+        bar.appendChild(expand);
+        const collapse = document.createElement("button");
+        collapse.textContent = '△△';
+        collapse.className = "tree collapse";
+        collapse.addEventListener('click', (e) => {
+            for (let i = 0, len = liSet.length; i < len; i++) {
+                Tree.close(liSet[i]);
+            }
+        });
+        bar.appendChild(collapse);
+        
+        ul.parentNode.insertBefore(bar, ul);
+
+        for (let i = 0, len = liSet.length; i < len; i++) {
+            const li = liSet[i];
+            let target = "";
             // if item as children, hide them
             if (li.getElementsByTagName("ul").length) {
                 li.classList.add(Tree.MORE);
@@ -271,7 +297,7 @@ var Tree = {
      * Recursively close li ancestors
      */
     close: function () {
-        var li; // don't forget or may produce some strange var collapse
+        let li; // don't forget or may produce some strange var collapse
         for (i = arguments.length - 1; i >= 0; i--) {
             li = arguments[i];
             if (li.className == null) li = document.getElementById(arguments[i]);

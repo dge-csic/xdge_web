@@ -138,6 +138,20 @@ div.entrywrap > nav {
     color: #fff;
 }
 
+button.tree {
+    color: #fff;
+    background-color: transparent;
+    border: 1px #fff solid;
+    padding: 0 0.1rem;
+    margin-right: 0.5rem;
+    line-height: 1;
+    border-radius: 0.2rem;
+}
+
+button.tree:hover {
+    color: var(--text);
+}
+
 div.entrywrap > article {
     width: 40rem;
     height: 100%;
