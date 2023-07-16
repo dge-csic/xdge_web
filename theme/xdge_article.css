@@ -237,6 +237,7 @@ nav.toc a>* {
     font-size: inherit;
 }
 
+/*
 nav.toc ul a {
     padding-left: 1rem;
 }
@@ -260,6 +261,7 @@ nav.toc ul ul ul ul ul a {
 nav.toc ul ul ul ul ul ul a {
     padding-left: 6rem;
 }
+*/
 
 nav.toc a.active,
 nav.toc a:hover {

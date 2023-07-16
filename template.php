@@ -18,6 +18,7 @@ $home_href = Route::home_href();
     <title><?= Route::title() ?></title>
     <link rel="preload" as="font" href="<?= Route::home_href() ?>theme/fonts/NotoSansDisplay-Italic-VariableFont_wdth,wght.woff2" type="font/woff2" crossorigin="anonymous">
     <link rel="preload" as="font" href="<?= Route::home_href() ?>theme/fonts/NotoSansDisplay-VariableFont_wdth,wght.woff2" type="font/woff2" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="<?= Route::home_href() ?>theme/teinte.tree.css" />
     <link rel="stylesheet" href="theme/xdge_article.css" />
     <link rel="stylesheet" href="theme/xdge_layout.css" />
 </head>
@@ -75,6 +76,7 @@ form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }))
 */
     </script>
     <script src="<?= Route::home_href() ?>theme/xdge.js">//</script>
+    <script type="text/javascript" charset="utf-8" src="<?= Route::home_href() ?>theme/teinte.tree.js">//</script>
 </body>
 
 </html>

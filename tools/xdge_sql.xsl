@@ -52,7 +52,7 @@
     </xsl:variable>
     <xsl:variable name="toc">
       <xsl:if test="tei:sense[tei:num]">
-        <ul class="entry-toc">
+        <ul class="entry-toc tree">
           <xsl:apply-templates mode="toc" select="tei:sense[tei:num]"/>
         </ul>
       </xsl:if>

@@ -439,7 +439,8 @@ class Formajax {
         window.history.pushState({}, '', lemma);
         Formajax.loadHtml(main, url);
     });
-    // for article, active toc  
+    // for article, active toc
+    /*
     main.addEventListener('click', (e) => {
         const a = Formajax.selfOrAncestor(e.target, 'a');
         if (!a || !a.classList.contains('sense')) {
@@ -452,6 +453,7 @@ class Formajax {
         a.classList.add('active');
         document.lastEntryToc = a;
     });
+    */
     const indicar = document.getElementById('indicar');
     if (!indicar) return; // ??
     const inverso = document.getElementById('inverso');
