@@ -364,22 +364,23 @@ class Formajax {
         suggest.style.display = 'block';
     }
 
-    static loadHtml(div, url, append = false) {
+    static loadHtml(div, url, onload = null, append = false) {
         if (!url) return; // log an error ?
         if (!div) return; // disappeared ?
         if (!append) {
             div.innerText = '';
         }
         this.loadLines(div, url, function (html) {
-            if (!div) { // what ?
+            if (!div) { // disappeared ?
                 return false;
+            }
+            if (!html) { // always end, or pb ?
+                return;
             }
             // last line, liberate div for next load
             if (html == Formajax.EOF) {
                 div.loading = false;
-                return;
-            }
-            if (!html) { // always end, or pb ?
+                if (onload) onload();
                 return;
             }
             div.insertAdjacentHTML('beforeend', html);
@@ -437,7 +438,7 @@ class Formajax {
         const lemma = a.getAttribute('href');
         const url = 'article/' + lemma;
         window.history.pushState({}, '', lemma);
-        Formajax.loadHtml(main, url);
+        Formajax.loadHtml(main, url, Tree.load);
     });
     // for article, active toc
     /*
