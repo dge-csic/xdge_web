@@ -347,11 +347,9 @@ section.sense>b.pc::before {
 }
 
 
-.sense>b.num {
+section.sense>b.num {
     color: var(--text_soft);
 }
-*/
-
 
 section.sense div,
 section.sense p {
