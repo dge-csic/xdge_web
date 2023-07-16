@@ -107,15 +107,6 @@ table {
     font-size: inherit;
 }
 
-button {
-    padding: 0;
-    line-height: inherit;
-    cursor: pointer;
-    text-transform: none;
-    overflow: visible;
-    -webkit-appearance: button;
-}
-
 /* Default tables with no cellspacing no cellpadding */
 table {
     border-spacing: 0;

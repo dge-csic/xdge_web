@@ -70,8 +70,10 @@
     width: 100%;
     outline: 0;
     border: none;
-    padding: 2px 24px 2px 1ex;
-    color: var(--rubric);
+    padding: 2px 24px 2.5px 0.5rem;
+    color: #888;
+    font-size: 1.5rem;
+    font-weight: 300;
 }
 
 .inverso #form {
@@ -79,13 +81,6 @@
 }
 
 #left form {
-    border-left: 1px var(--border) solid;
-}
-
-#lemmas {
-    /* lemmas suggestion */
-    height: 100%;
-    overflow-y: scroll;
     border-left: 1px var(--border) solid;
 }
 
@@ -114,12 +109,15 @@
 }
 
 #lemmas {
-    height: calc(100vh - 8.45rem);
+    /* lemmas suggestion */
+    overflow-y: scroll;
+    border-left: 1px var(--border) solid;
+    height: calc(100vh - 9.5rem);
 }
 
 #main {
     width: 55rem;
-    height: calc(100vh - 7rem);
+    height: calc(100vh - 7.3rem);
     overflow: auto;
     position: relative;
     border-right: 1px var(--border) solid;
@@ -229,7 +227,7 @@ div.entrywrap > article {
 }
 
 #footer {
-    height: var(--framing);
+    /* height here may produce the bad pixel */
     font-size: 0.85rem;
     display: flex;
     justify-content: center;

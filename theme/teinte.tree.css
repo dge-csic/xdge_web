@@ -39,9 +39,7 @@ menu.tree {
     list-style-image: none;
     list-style: none;
     padding: 0 0 1px 1.1em;
-    border-color: var(--tree-line);
-    border-width: 1px;
-    border-left-style: dotted;
+    border-left: var(--tree-line) 1px dashed;
     position: relative;
 }
 
@@ -60,14 +58,24 @@ menu.tree {
     color: var(--tree-line);
 }
 
+div.tree.all {
+    border-bottom: var(--tree-line) 1px dashed;
+}
+
 button.tree {
+    padding: 0;
+    line-height: inherit;
+    cursor: pointer;
+    text-transform: none;
+    overflow: visible;
     color: var(--tree-line);
     background-color: transparent;
-    border: 1px var(--tree-line) solid;
+    border: none;
     padding: 0 0.1rem;
     margin-right: 0.5rem;
-    line-height: 1;
+    line-height: 1.5;
     border-radius: 0.2rem;
+    letter-spacing: -0.3em;
 }
 
 

@@ -133,7 +133,7 @@ in your parameter file<br/>
             // echo "<!-- inverso exact $form $rowid -->\n";
             return $rowid;
         }
-        return false;
+        return -1;
     }
 
     /** Get rowid of a form */
@@ -171,7 +171,7 @@ in your parameter file<br/>
         if ($rowid = $q->fetchColumn(0)) {
             return $rowid;
         }
-        return false;
+        return -1;
     }
 
     /**

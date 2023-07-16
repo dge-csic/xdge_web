@@ -15,6 +15,7 @@ CREATE TABLE entry (
 CREATE INDEX entryLemma     ON entry (lemma ASC);
 CREATE INDEX entryXmlid     ON entry (xmlid ASC);
 CREATE INDEX entryForm      ON entry (form ASC);
+-- find by monoton, rowid key should ensure to have the first 
 CREATE INDEX entryMonoton   ON entry (monoton ASC, rowid ASC);
 CREATE INDEX entryLatin     ON entry (latin DESC);
 CREATE INDEX entryInverso   ON entry (inverso ASC, rowid ASC);
@@ -35,7 +36,6 @@ CREATE VIRTUAL TABLE search USING FTS3 (
 
 CREATE TABLE inverso (
     -- table populated from entry in inverso order
-    -- used in lemma column to have lemmas before
     rowid               INTEGER, -- rowid auto
     xmlid  TEXT UNIQUE NOT NULL, -- entry/@xml:id
     label         TEXT NOT NULL, -- *Ἀhεριγ<sup>u̯</sup>ος
@@ -44,3 +44,14 @@ CREATE TABLE inverso (
 );
 CREATE INDEX inversoInverso ON inverso (inverso ASC, rowid ASC);
 CREATE INDEX inversoXmlid   ON inverso (xmlid ASC);
+
+CREATE TABLE bibl (
+    rowid               INTEGER, -- rowid auto
+    label         BLOB NOT NULL, -- <span class="bibl" id="bibl820251"><span class="author">Hp.</span><cite>Epid.</cite><span class="biblScope">7.121</span></span>
+    author                 TEXT, -- Hp.
+    title                  TEXT, -- Epid.
+    scope                  TEXT, -- 7.121 (for displayx in lists)
+    entry               INTEGER, -- entry rowid
+    entrycode     NOT NULL TEXT, -- entry/@xml:id, to catch entry/rowid
+    PRIMARY KEY(rowid ASC)
+);

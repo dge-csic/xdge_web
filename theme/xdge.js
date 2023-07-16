@@ -81,32 +81,43 @@ class Formajax {
      * “Line” separator could be configured with any string,
      * this allow to load multiline html chunks 
      * 
-     * @param {String} url 
+     * @param {URL} url 
      * @param {function} callback 
      * @returns 
      */
-    static loadLines(div, url, callback, sep = '\n') {
+    static loadLines(url, div, callback, sep = '\n') {
         return new Promise(function (resolve, reject) {
-            if (div.xhr) { // still loading, abort
+            if (typeof url === 'string') {
+                url = new URL(url, document.location);
+            }
+            if (div.xhr) { 
+                // already loading something
+                /*
+                // do not abort, this could be an effect of bad events, like onscroll
                 div.xhr.abort();
                 delete div.xhr;
+                */
+                // shall we queue or log something ?
+                return false;
             }
-            var xhr = new XMLHttpRequest();
+            let xhr = new XMLHttpRequest();
+            xhr.url = url;
             div.xhr = xhr;
-            var start = 0;
+            let indexStart = 0;
             xhr.onprogress = function () {
                 // loop on separator
-                var end;
-                while ((end = xhr.response.indexOf(sep, start)) >= 0) {
-                    callback(xhr.response.slice(start, end));
-                    start = end + sep.length;
+                let indexEnd;
+                while ((indexEnd = xhr.response.indexOf(sep, indexStart)) >= 0) {
+                    callback(xhr.response.slice(indexStart, indexEnd));
+                    indexStart = indexEnd + sep.length;
                 }
             };
             xhr.onload = function () {
-                let part = xhr.response.slice(start);
+                let part = xhr.response.slice(indexStart);
                 if (part.trim()) callback(part);
                 // last, send a message to callback
                 callback(Formajax.EOF);
+                delete div.xhr;
                 resolve();
             };
             xhr.onerror = function () {
@@ -364,17 +375,28 @@ class Formajax {
         suggest.style.display = 'block';
     }
 
-    static loadHtml(div, url, onload = null, append = false) {
+    /**
+     * Load html from url
+     * 
+     * @param {URL} url source url for html
+     * @param {Element} div destination container for html
+     * @param {string} adjacent  afterbegin|beforeend, see insertAdjacentHTML
+     * @param {callback} onload apply things when load is finished
+     * @returns 
+     */
+    static loadHtml(url, div, adjacent = false, onload = null) {
         if (!url) return; // log an error ?
         if (!div) return; // disappeared ?
-        if (!append) {
+        if (!adjacent) { // no append or prepend
             div.innerText = '';
+            adjacent = 'beforeend';
         }
-        this.loadLines(div, url, function (html) {
+        this.loadLines(url, div, function (html) {
             if (!div) { // disappeared ?
                 return false;
             }
-            if (!html) { // always end, or pb ?
+            if (html === false) { 
+                // loadLines is already loading, maybe same repeated url
                 return;
             }
             // last line, liberate div for next load
@@ -383,7 +405,7 @@ class Formajax {
                 if (onload) onload();
                 return;
             }
-            div.insertAdjacentHTML('beforeend', html);
+            div.insertAdjacentHTML(adjacent, html);
         }, Formajax.LF);
     }
 
@@ -418,7 +440,13 @@ class Formajax {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         const url = form.action + "?" + Formajax.formQuery(form);
-        Formajax.loadHtml(lemmas, url);
+        Formajax.loadHtml(url, lemmas, null, (e) => {
+            // scroll active into view onload
+            const a = lemmas.querySelector("a.lemma.active");
+            if (a) {
+                a.scrollIntoView({  block: "start" });
+            }
+        });
         return false;
     }, true);
     // send submit when suggest change
@@ -434,31 +462,55 @@ class Formajax {
         if (!a) return;
         if (!a.classList.contains('lemma')) return;
         e.preventDefault();
+        // suppress active from a just loaded page
+        const aSet = lemmas.querySelectorAll("a.lemma.active");
+        aSet.forEach((a) => {
+            a.classList.remove('active');
+        });
         // load url
         const lemma = a.getAttribute('href');
         const url = 'article/' + lemma;
         window.history.pushState({}, '', lemma);
-        Formajax.loadHtml(main, url, Tree.load);
+        Formajax.loadHtml(url, main, null, Tree.load);
     });
-    // for article, active toc
-    /*
-    main.addEventListener('click', (e) => {
-        const a = Formajax.selfOrAncestor(e.target, 'a');
-        if (!a || !a.classList.contains('sense')) {
-            // not a link in toc
-            return false; 
-        }
-        if (document.lastEntryToc) {
-            document.lastEntryToc.classList.remove('active');
-        }
-        a.classList.add('active');
-        document.lastEntryToc = a;
-    });
-    */
     const indicar = document.getElementById('indicar');
     if (!indicar) return; // ??
     const inverso = document.getElementById('inverso');
     if (!inverso) return; // ??
+    // infinite scroll of lemmas
+    lemmas.addEventListener('scroll', function() {
+        // bottom scroll
+        if (lemmas.scrollTop + lemmas.clientHeight >= lemmas.scrollHeight) {
+            // get last rowid
+            const last = lemmas.lastElementChild;
+            if (!last) {
+                console.log("Error? Infinite scroll, no last a")
+                return;
+            }
+            const url = new URL(form.action);
+            if (inverso.value) {
+                url.searchParams.append("inverso", inverso.value);
+            }
+            url.searchParams.append("id_start", Number(last.dataset.rowid) + 1);
+            Formajax.loadHtml(url, lemmas, 'beforeend');
+        }
+        if (lemmas.scrollTop <= 0) {
+            const first = lemmas.firstElementChild;
+            if (!first) {
+                console.log("Error? Infinite scroll, no first a")
+                return;
+            }
+            const url = new URL(form.action);
+            if (inverso.value) {
+                url.searchParams.append("inverso", inverso.value);
+            }
+            url.searchParams.append("id_end", first.dataset.rowid);
+            Formajax.loadHtml(url, lemmas, 'afterbegin', (e) => {
+                first.scrollIntoView({  block: "start" });
+            });
+        }
+    });
+
     indicar.addEventListener('click', (e) => {
         e.preventDefault();
         inverso.classList.remove("active");
