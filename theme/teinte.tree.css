@@ -25,8 +25,7 @@ menu.tree {
 .tree menu {
     list-style-type: none;
     padding: 0 0 0 0;
-    margin: 2px 0 2px -9px;
-    border-left: dotted 1px transparent;
+    margin: 2px 0 2px 0ex;
 }
 
 .tree li {
@@ -35,16 +34,10 @@ menu.tree {
     background-position: -1px 4px;
     list-style-image: none;
     list-style: none;
-    padding: 1px 0 1px 18px;
-    border-left: solid transparent 1px;
-    border-top: solid transparent 1px;
-    border-bottom: solid transparent 1px;
+    padding: 0 0 1px 1.1ex;
+    border-left: dotted 1px #ccc;
 }
 
-.tree ol:hover,
-.tree ul:hover {
-    border-left: dotted 1px #333;
-}
 
 .tree li.more,
 .tree li.less {
@@ -53,7 +46,7 @@ menu.tree {
 
 .tree li:before {
     font-family: Arial, 'Liberation Sans', 'DejaVu Sans', 'FreeSans', 'Lucida Sans Unicode', sans-serif;
-    margin-left: -2ex;
+    margin-left: -1.8ex;
     float: left;
     line-height: 150%;
     cursor: pointer;
@@ -74,8 +67,10 @@ menu.tree {
 /*  */
 
 .tree li:before {
+    /*
     content: '○ ';
     font-weight: 900;
+    */
 }
 
 
@@ -88,10 +83,6 @@ menu.tree {
     .treejs li.less ol,
     .treejs li.less ul {
         display: block;
-    }
-    .treejs li.less>ol,
-    .treejs li.less>ul {
-        border-left: 1px dotted #FFF;
     }
     .treejs li.more ol,
     .treejs li.more ul {

@@ -140,16 +140,15 @@ h1 a {
     color: inherit;
 }
 
-sup {
+/* keep line height */
+sup, sub {
+    vertical-align: baseline;
     position: relative;
-    top: -0.5em;
-    font-size: 80%;
+    top: -0.4em;
 }
 
-sub {
-    position: relative;
-    bottom: -0.5em;
-    font-size: 80%;
+sub { 
+    top: 0.4em; 
 }
 
 /* the default value in input, lines should be separated to work */
@@ -227,12 +226,6 @@ nav.toc {
     font-size: 0.85rem;
     font-weight: 300;
     padding-left: 0.5rem;
-}
-
-nav.toc ul {
-    list-style: none;
-    padding-left: 0;
-    margin-left: 0;
 }
 
 nav.toc a {
