@@ -16,6 +16,7 @@ class XdgeBuild
     static $idEntry = 1;
     /** SQL prepared queries */
     static $insEntry;
+    static $insBibl;
     static $insSearch;
     /** a translitteration table for latin chars */
     static $lat_tr;
@@ -67,7 +68,7 @@ class XdgeBuild
         self::$insEntry = self::$pdo->prepare("
         INSERT INTO entry
         (
-            xmlid,
+            name,
             lemma,
             label,
             html,
@@ -81,6 +82,20 @@ class XdgeBuild
         )
         VALUES (?,?,?,?,?,  ?,?,?,?,?);");
         // self::$insSearch = self::$pdo->prepare("INSERT INTO search VALUES (?,?,?,?,?,?,?,?);");
+
+        self::$insBibl = self::$pdo->prepare("
+        INSERT INTO bibl
+        (
+            name, 
+            label, 
+            author, 
+            title, 
+            scope, 
+            
+            entryname, 
+            entrylabel
+        )
+        VALUES (?,?,?,?,?,  ?,?);");
 
         $proc = new XSLTProcessor();
         $proc->registerPHPFunctions();
@@ -97,7 +112,9 @@ class XdgeBuild
         }
         self::$pdo->commit();
         // load inverso table
-        self::$pdo->exec("INSERT INTO inverso (xmlid, label, inverso) SELECT xmlid, label, inverso FROM entry ORDER BY inverso, rowid;");
+        self::$pdo->exec("INSERT INTO inverso (name, label, inverso) SELECT name, label, inverso FROM entry ORDER BY inverso, rowid;");
+        // update bibl with entry.rowid
+        self::$pdo->exec("UPDATE bibl SET entry = (SELECT rowid FROM entry WHERE entry.name = bibl.entryname");
         // optimize
         self::$pdo->exec("INSERT INTO  search(search) VALUES ('optimize'); -- optimize fulltext index");
     }
@@ -114,7 +131,7 @@ class XdgeBuild
     }
 
     /** Insert an entry, method is called by xsl transformation */
-    static function entry($xmlid, $lemma, $label, $html, $toc, $prevnext, $txt)
+    static function entry($name, $lemma, $label, $html, $toc, $prevnext, $txt)
     {
         $txt = self::xml($txt, true);
         // NO modern-old greek translit, XML should be good
@@ -135,7 +152,7 @@ class XdgeBuild
         $toc = self::xml($toc);
         $prevnext = self::xml($prevnext);
         self::$insEntry->execute(array(
-            $xmlid,
+            $name,
             $lemma,
             self::xml($label, true),
             $html,
@@ -161,6 +178,32 @@ class XdgeBuild
         ));
         */
     }
+
+    /**
+     * Insert a <bibl> from xslt
+     */
+    static function bibl(
+        $name, 
+        $label, 
+        $author, 
+        $title, 
+        $scope, 
+
+        $entryname, 
+        $entrylabel
+    ) {
+        self::$insBibl->execute(array(
+            $name,
+            self::xml($label, true),
+            $author,
+            $title,
+            $scope,
+            $entryname,
+            self::xml($entrylabel, true),
+        ));
+
+    }
+    
     /**
      * get XML from a dom sent by xsl
      */

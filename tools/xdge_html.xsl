@@ -440,7 +440,10 @@ Transform XDGE in html.
     </cite>
   </xsl:template>
   <xsl:template match="tei:bibl">
-    <span class="bibl" id="{@xml:id}">
+    <span class="bibl">
+      <xsl:attribute name="id">
+        <xsl:call-template name="id"/>
+      </xsl:attribute>
       <xsl:apply-templates/>
     </span>
   </xsl:template>
@@ -516,21 +519,21 @@ article_{sense/@n}    :
       <xsl:when test="@xml:id">
         <xsl:value-of select="@xml:id"/>
       </xsl:when>
-      <xsl:when test="ancestor-or-self::tei:sense">
+      <xsl:when test="self::tei:bibl">
         <xsl:value-of select="ancestor-or-self::tei:entry[1]/@xml:id"/>
         <xsl:text>_</xsl:text>
-        <xsl:for-each select="ancestor-or-self::tei:sense">
-          <xsl:choose>
-            <xsl:when test="tei:num">
-              <xsl:value-of select="tei:num"/>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:text>.</xsl:text>
-              <xsl:number/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:for-each>
+        <xsl:number level="any" from="tei:entry" format="0001"/>
       </xsl:when>
+      <xsl:when test="self::tei:cit">
+        <xsl:value-of select="ancestor-or-self::tei:entry[1]/@xml:id"/>
+        <xsl:text>_</xsl:text>
+        <xsl:number level="any" from="tei:entry" format="0001"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="ancestor-or-self::tei:entry[1]/@xml:id"/>
+        <xsl:text>_</xsl:text>
+        <xsl:number level="any" from="tei:entry" format="0001"/>
+      </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 </xsl:transform>

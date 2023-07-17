@@ -142,7 +142,7 @@ in your parameter file<br/>
         // convert ancient greek accentued letter to modern
         $form = strtr($form, self::$grc_el_tr);
         // exact id ?
-        $q = self::$pdo->prepare('select rowid FROM entry WHERE xmlid = ?');
+        $q = self::$pdo->prepare('select rowid FROM entry WHERE name = ?');
         $q->execute(array($form));
         if ($rowid = $q->fetchColumn(0)) {
             return $rowid;
@@ -166,7 +166,7 @@ in your parameter file<br/>
 24147 ἄρμα2
 24148 Ἄρμα
       */
-        $q = self::$pdo->prepare("SELECT rowid, xmlid FROM entry WHERE monoton >= ? LIMIT 1;");
+        $q = self::$pdo->prepare("SELECT rowid, name FROM entry WHERE monoton >= ? LIMIT 1;");
         $q->execute(array($form));
         if ($rowid = $q->fetchColumn(0)) {
             return $rowid;
@@ -181,8 +181,8 @@ in your parameter file<br/>
     {
         // convert ancient greek accentued letter to modern
         $form = strtr($form, self::$grc_el_tr);
-        // xmlid ?
-        if ($res = self::artquery("xmlid = ?", $form)) return $res;
+        // name ?
+        if ($res = self::artquery("name = ?", $form)) return $res;
         // lemma ?
         if ($res = self::artquery("lemma = ?", $form)) return $res;
         // without special signs ?
@@ -206,7 +206,7 @@ in your parameter file<br/>
         if ($count < 1) {
             return false;
         }
-        $query = self::$pdo->prepare('SELECT html, toc, prevnext, xmlid, label FROM entry WHERE ' . $where);
+        $query = self::$pdo->prepare('SELECT html, toc, prevnext, name, label FROM entry WHERE ' . $where);
         $query->execute(array($form));
         $res = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {

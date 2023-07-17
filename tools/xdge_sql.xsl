@@ -41,7 +41,7 @@
     </xsl:variable>
     <!-- need to be one element to be transformed as a document by exslt:node-set() and passed to php  -->
     <xsl:variable name="label">
-      <a>
+      <a href="{@xml:id}" class="entry">
         <xsl:apply-templates select="tei:form[1]/tei:orth[@type='lemma'][1]/node()"/>
       </a>
     </xsl:variable>
@@ -73,16 +73,56 @@
         exslt:node-set($txt)
       )"/>
     </xsl:if>
-    <!-- for now, no subpart indexed 
-    <xsl:apply-templates mode="sql"/>
-    -->
+    <xsl:apply-templates select=".//tei:bibl" mode="sql">
+      <xsl:with-param name="entryname" select="@xml:id"/>
+      <xsl:with-param name="entrylabel" select="$label"/>
+    </xsl:apply-templates>
   </xsl:template>
+  
+  <xsl:template match="tei:bibl" mode="sql">
+    <xsl:param name="entryname"/>
+    <xsl:param name="entrylabel"/>
+    <xsl:variable name="name">
+      <xsl:call-template name="id"/>
+    </xsl:variable>
+    <xsl:variable name="label">
+      <span class="bibl">
+        <xsl:apply-templates/>
+      </span>
+    </xsl:variable>
+    <xsl:variable name="author">
+      <xsl:for-each select="tei:author">
+        <xsl:value-of select="."/>
+      </xsl:for-each>
+    </xsl:variable>
+    <xsl:variable name="title">
+      <xsl:value-of select="tei:title"/>
+    </xsl:variable>
+    <xsl:variable name="scope">
+      <xsl:value-of select="tei:biblScope"/>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="not(tei:author) and not(tei:title)"/>
+      <xsl:when test="function-available('php:function')">
+        <xsl:value-of select="php:function(
+          'XdgeBuild::bibl', 
+          string($name),
+          exslt:node-set($label) ,
+          string($author),
+          string($title),
+          string($scope),
+          string($entryname),
+          exslt:node-set($entrylabel)
+        )"/>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+  
   <!-- Go throw -->
   <xsl:template match="tei:body | tei:text | tei:sense | tei:cit" mode="sql">
     <xsl:apply-templates select="*" mode="sql"/>
   </xsl:template>
   <!-- Stop it -->
-  <xsl:template match="tei:teiHeader | tei:form | tei:xr | tei:bibl | tei:num" mode="sql"/>
   <!-- A text view for indexation and snippets, keeping simple typo tags -->
   <!-- For inline, default as html -->
   <xsl:template match="tei:* " mode="txt">
