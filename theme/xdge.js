@@ -105,7 +105,6 @@ class Formajax {
             div.xhr = xhr;
             let indexStart = 0;
             xhr.onprogress = function () {
-                // loop on separator
                 let indexEnd;
                 while ((indexEnd = xhr.response.indexOf(sep, indexStart)) >= 0) {
                     callback(xhr.response.slice(indexStart, indexEnd));
@@ -385,28 +384,64 @@ class Formajax {
      * @returns 
      */
     static loadHtml(url, div, adjacent = false, onload = null) {
+        // May be optimized with streamHTML, BUT
+
         if (!url) return; // log an error ?
         if (!div) return; // disappeared ?
+        // maybe repeated call like with onscroll event
+        if (div.loading) return;
+        div.loading = true;
         if (!adjacent) { // no append or prepend
             div.innerText = '';
             adjacent = 'beforeend';
         }
-        this.loadLines(url, div, function (html) {
-            if (!div) { // disappeared ?
-                return false;
-            }
-            if (html === false) { 
-                // loadLines is already loading, maybe same repeated url
-                return;
-            }
-            // last line, liberate div for next load
-            if (html == Formajax.EOF) {
-                div.loading = false;
-                if (onload) onload();
-                return;
-            }
+        // already loading
+        fetch(url).then(function (response) {
+            return response.text();
+        }).then(function (html) {
+            div.loading = false;
             div.insertAdjacentHTML(adjacent, html);
-        }, Formajax.LF);
+            if (onload) onload();
+        }).catch(function (err) {
+            div.loading = false;
+            // There was an error
+            console.warn('loadHtml error ' + url, err);
+        });
+    }
+    
+    /**
+     * Streaming html is not OK afterbegin, is not used for lemmas
+     * Use for big article or search results
+     * @param {*} url 
+     * @param {*} div 
+     * @param {*} onload 
+     */
+    static streamHtml(url, div, onload) {
+        if (!url) return; // log an error ?
+        if (!div) return; // disappeared ?
+        // maybe repeated call like with onscroll event
+        if (div.loading) return;
+        div.loading = true;
+        const consume = responseReader => {
+            return responseReader.read().then(result => {
+                if (result.done) {
+                    div.loading = false;
+                    if (onload) onload();
+                    return; 
+                }
+                const chunk = result.value;
+                div.insertAdjacentHTML('beforeend', chunk);
+                return consume(responseReader);
+            });
+        }
+        fetch(url).then(response => {
+            return consume(response.body.getReader());
+        })
+        .catch(function (err) {
+            div.loading = false;
+            console.warn('loadHtml error ' + url, err);
+        });
+
     }
 
     static selfOrAncestor(el, name) {

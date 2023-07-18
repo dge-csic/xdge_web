@@ -54,8 +54,8 @@ else {
 }
 
 // rowid should be the start index
-if ($inverso) $q = Xdge::$pdo->prepare("SELECT xmlid, label, rowid FROM inverso WHERE rowid >= ? AND rowid < ?");
-else $q = Xdge::$pdo->prepare("SELECT xmlid, label, rowid FROM entry WHERE rowid >= ? AND rowid < ?");
+if ($inverso) $q = Xdge::$pdo->prepare("SELECT name, label, rowid FROM inverso WHERE rowid >= ? AND rowid < ?");
+else $q = Xdge::$pdo->prepare("SELECT name, label, rowid FROM entry WHERE rowid >= ? AND rowid < ?");
 // if ($start > 1) echo '<a target="_self" href="',($rowid - $after + $before),'">…</a>',"\n";
 
 $q->execute(array($id_start, $id_end));
@@ -68,10 +68,10 @@ while ($row = $q->fetch(PDO::FETCH_ASSOC)) {
         $class = " active";
     }
     $i++;
-    // xmlid is unique (verified by schema in index in database)
-    // but lemma may be not (homograph xmlid="word-flexion-flexion")
+    // @xml:id is unique (verified by schema in index in database)
+    // but lemma may be not (homograph name="word-flexion-flexion")
     // test Safari ? encoding pb ? rowid param is given to article page to keep
-    echo '<a data-rowid="' . $row['rowid'] . '" class="lemma' . $class . '" id="_' . $row['xmlid'] . '" href="' . $row['xmlid'] . '">' . $row['label'] . '</a>' . "\n";
+    echo '<a data-rowid="' . $row['rowid'] . '" class="lemma' . $class . '" id="_' . $row['name'] . '" href="' . $row['name'] . '">' . $row['label'] . '</a>' . "\n";
 }
 // test if there is a lemma left
 // echo '<a target="_self" href="',($last - $before +1),'">…</a>';

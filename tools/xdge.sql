@@ -20,20 +20,6 @@ CREATE INDEX entryMonoton   ON entry (monoton ASC, rowid ASC);
 CREATE INDEX entryLatin     ON entry (latin DESC);
 CREATE INDEX entryInverso   ON entry (inverso ASC, rowid ASC);
 
-CREATE VIRTUAL TABLE search USING FTS3 (
-    -- table of searchable items
-    rowid                  INTEGER, -- rowid auto
-    entry      INT,  -- entry rowid
-    name      TEXT, -- entry/@xml:id
-    lemma     TEXT, -- *Ἀhεριγος
-    label     TEXT, -- *Ἀhεριγ<sup>u̯</sup>ος
-    anchor    TEXT, -- relative anchor in entry
-    type      TEXT, -- content type
-    text      TEXT, -- exact text
-    monoton   TEXT, -- desaccentuated text
-    PRIMARY KEY(rowid ASC)
-);
-
 CREATE TABLE inverso (
     -- table populated from entry in inverso order
     rowid               INTEGER, -- rowid auto
@@ -58,3 +44,17 @@ CREATE TABLE bibl (
     PRIMARY KEY(rowid ASC)
 );
 CREATE INDEX biblSort ON bibl (author ASC, title ASC, entry ASC);
+
+
+CREATE VIRTUAL TABLE search USING FTS5 (
+    -- table of searchable items
+    text                , -- searchable text, lowercase without tags
+    type                , -- a token identifying content type
+    name       UNINDEXED, -- generated anchor in entry
+    html       UNINDEXED, -- displayable content
+    branch     UNINDEXED, -- toc branch for component
+    context    UNINDEXED, -- context in which insert hilited text
+    entry      UNINDEXED, -- entry rowid
+    entryname  UNINDEXED, -- entry/@xml:id
+    tokenize = "unicode61 remove_diacritics 0"
+);

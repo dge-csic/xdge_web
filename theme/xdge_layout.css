@@ -287,11 +287,48 @@ div.entrywrap > article {
 
 article.text {
     margin: 1rem;
-    width: 40em;
+    width: 40rem;
     background-color: var(--bg);
     padding: 1rem;
 }
 
+article.results {
+    margin: 0;
+    width: 40rem;
+    background-color: var(--bg_soft);
+    padding: 1rem;
+}
+
+article.results div.branch {
+    color: #000;
+    font-size: 0.85rem;
+    line-height: 1.05;
+    font-weight: 300;
+}
+
+div.branch dfn {
+    color: inherit;
+    font-weight: inherit;
+}
+
+section.hit {
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 1rem;
+    border: 2px solid transparent;
+}
+
+section.hit:hover {
+    border-color: #fff;
+}
 
 
-.prevnext
+a.hit {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+div.found {
+    background-color: var(--bg);
+    padding: 0 1rem;
+}

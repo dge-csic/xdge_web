@@ -38,6 +38,7 @@ class Xdge
     /** constructor */
     static public function init()
     {
+        mb_internal_encoding("UTF-8");
         $config_file = __DIR__ . "/config.php";
         if (!file_exists($config_file)) {
             throw new Exception("Configuration file not found, expected in:<br/> 

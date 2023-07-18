@@ -1,4 +1,9 @@
 <?php // encoding="UTF-8"
+declare(strict_types=1);
+
+include_once(__DIR__ . '/../vendor/autoload.php');
+
+use \Oeuvres\Kit\{Xt};
 
 /**
  * Global pilot of xdge app
@@ -15,9 +20,9 @@ class XdgeBuild
     /** Count */
     static $idEntry = 1;
     /** SQL prepared queries */
-    static $insEntry;
-    static $insBibl;
-    static $insSearch;
+    static $qEntry;
+    static $qBibl;
+    static $qSearch;
     /** a translitteration table for latin chars */
     static $lat_tr;
     /** a translitteration table for greek chars */
@@ -65,7 +70,7 @@ class XdgeBuild
     static function load($glob)
     {
         // insert statements
-        self::$insEntry = self::$pdo->prepare("
+        self::$qEntry = self::$pdo->prepare("
         INSERT INTO entry
         (
             name,
@@ -83,7 +88,7 @@ class XdgeBuild
         VALUES (?,?,?,?,?,  ?,?,?,?,?);");
         // self::$insSearch = self::$pdo->prepare("INSERT INTO search VALUES (?,?,?,?,?,?,?,?);");
 
-        self::$insBibl = self::$pdo->prepare("
+        self::$qBibl = self::$pdo->prepare("
         INSERT INTO bibl
         (
             name, 
@@ -94,6 +99,20 @@ class XdgeBuild
             
             entryname, 
             entrylabel
+        )
+        VALUES (?,?,?,?,?,  ?,?);");
+
+        self::$qSearch = self::$pdo->prepare("
+        INSERT INTO search
+        (
+            type, 
+            name, 
+            text, 
+            html, 
+            branch, 
+            
+            context, 
+            entryName
         )
         VALUES (?,?,?,?,?,  ?,?);");
 
@@ -114,7 +133,7 @@ class XdgeBuild
         // load inverso table
         self::$pdo->exec("INSERT INTO inverso (name, label, inverso) SELECT name, label, inverso FROM entry ORDER BY inverso, rowid;");
         // update bibl with entry.rowid
-        self::$pdo->exec("UPDATE bibl SET entry = (SELECT rowid FROM entry WHERE entry.name = bibl.entryname");
+        self::$pdo->exec("UPDATE bibl SET entry = (SELECT rowid FROM entry WHERE entry.name = bibl.entryname)");
         // optimize
         self::$pdo->exec("INSERT INTO  search(search) VALUES ('optimize'); -- optimize fulltext index");
     }
@@ -151,7 +170,7 @@ class XdgeBuild
         $html = self::xml($html);
         $toc = self::xml($toc);
         $prevnext = self::xml($prevnext);
-        self::$insEntry->execute(array(
+        self::$qEntry->execute(array(
             $name,
             $lemma,
             self::xml($label, true),
@@ -192,7 +211,7 @@ class XdgeBuild
         $entryname, 
         $entrylabel
     ) {
-        self::$insBibl->execute(array(
+        self::$qBibl->execute(array(
             $name,
             self::xml($label, true),
             $author,
@@ -203,7 +222,32 @@ class XdgeBuild
         ));
 
     }
-    
+
+    /**
+     * From xslt, insert a searchable object
+     */
+    static function search(
+        $type,
+        $name, 
+        $html, 
+        $branch, 
+        $context, 
+        $entryname
+    ) {
+        $html = self::xml($html);
+        $text = Xt::detag($html);
+        $text = self::monoton($text);
+        self::$qSearch->execute(array(
+            $type,
+            $name,
+            $text,
+            $html,
+            self::xml($branch),
+            self::xml($context),
+            $entryname,
+        ));
+    }
+
     /**
      * get XML from a dom sent by xsl
      */
@@ -218,6 +262,8 @@ class XdgeBuild
             $doc->normalize();
             $xml .= $doc->saveXML($doc->documentElement);
         }
+        // del root ns
+        $xml = preg_replace('@ xmlns="http://www.w3.org/1999/xhtml"@', '', $xml);
         // cut the root element
         if ($inner) {
             $xml = substr($xml, strpos($xml, '>') + 1);

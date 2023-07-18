@@ -23,6 +23,10 @@ Route::get('/', __DIR__ . '/pages/presentacion.html');
 // try if a local html page is available
 Route::get('/(.*)', __DIR__ . '/pages/$1.html');
 
+Route::get(
+    '/busqueda',
+    __DIR__ . '/busqueda.php',
+);
 // try to have an article
 Route::get(
     '/(.*)',

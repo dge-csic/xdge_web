@@ -41,9 +41,9 @@
     </xsl:variable>
     <!-- need to be one element to be transformed as a document by exslt:node-set() and passed to php  -->
     <xsl:variable name="label">
-      <a href="{@xml:id}" class="entry">
+      <strong class="lemma">
         <xsl:apply-templates select="tei:form[1]/tei:orth[@type='lemma'][1]/node()"/>
-      </a>
+      </strong>
     </xsl:variable>
     <xsl:variable name="txt">
       <div>
@@ -77,6 +77,55 @@
       <xsl:with-param name="entryname" select="@xml:id"/>
       <xsl:with-param name="entrylabel" select="$label"/>
     </xsl:apply-templates>
+    <xsl:apply-templates select=".//tei:quote[@xml:lang='spa']" mode="sql">
+      <xsl:with-param name="entryname" select="@xml:id"/>
+      <xsl:with-param name="entrylabel" select="$label"/>
+    </xsl:apply-templates>
+  </xsl:template>
+  
+  <xsl:template match="tei:quote[@xml:lang='spa']" mode="sql">
+    <xsl:param name="entryname"/>
+    <xsl:param name="entrylabel"/>
+    <xsl:variable name="here" select="."/>
+    <xsl:variable name="name">
+      <xsl:apply-templates select="ancestor::tei:cit[1]" mode="id"/>
+    </xsl:variable>
+    <xsl:variable name="branch">
+      <div class="branch">
+        <xsl:copy-of select="$entrylabel"/>
+        <xsl:for-each select="ancestor-or-self::tei:sense[tei:num]">
+          <xsl:text> — </xsl:text>
+          <xsl:apply-templates select="." mode="title"/>
+        </xsl:for-each>
+      </div>
+    </xsl:variable>
+    <xsl:variable name="context">
+      <div class="cit">
+        <xsl:for-each select="ancestor::tei:cit[1]/node()">
+          <xsl:choose>
+            <xsl:when test="self::tei:quote[@xml:lang='spa'] and count(.|$here)= 1">{$html}</xsl:when>
+            <xsl:otherwise>
+              <xsl:apply-templates select="."/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+      </div>
+      <xsl:apply-templates select="ancestor::tei:cit[1]"/>
+    </xsl:variable>
+    <xsl:variable name="html">
+      <xsl:apply-templates select="."/>
+    </xsl:variable>
+    <xsl:if test="function-available('php:function')">
+      <xsl:variable name="entry" select="php:function(
+          'XdgeBuild::search', 
+          string('quotespa'), 
+          string($name),
+          exslt:node-set($html) ,
+          exslt:node-set($branch),
+          exslt:node-set($context),
+          string($entryname)
+        )"/>
+    </xsl:if>
   </xsl:template>
   
   <xsl:template match="tei:bibl" mode="sql">

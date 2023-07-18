@@ -138,7 +138,7 @@ Transform XDGE in html.
           <xsl:text>#</xsl:text>
           <xsl:call-template name="id"/>
         </xsl:attribute>
-        <xsl:apply-templates select="node()[1]" mode="next"/>
+        <xsl:apply-templates select="." mode="title"/>
       </a>
       <xsl:if test="tei:sense[tei:num]">
         <ul>
@@ -148,6 +148,10 @@ Transform XDGE in html.
     </li>
   </xsl:template>
   <xsl:template match="tei:milestone[@unit = 'label']"/>
+  <xsl:template match="*" mode="title"/>
+  <xsl:template match="tei:sense[tei:num]" mode="title">
+    <xsl:apply-templates select="node()[1]" mode="next"/>
+  </xsl:template>
   <!-- go next -->
   <xsl:template match="node()" mode="next">
     <xsl:choose>
@@ -506,7 +510,7 @@ article
 article_cit{number()} : for citations
 article_{sense/@n}    :  
   -->
-  <xsl:template name="id">
+  <xsl:template match="*" name="id" mode="id">
     <!--
     <xsl:value-of select="ancestor-or-self::tei:entry[1]/tei:form/tei:orth[@type='lemma']"/>
     <xsl:variable name="cit">
@@ -521,17 +525,18 @@ article_{sense/@n}    :
       </xsl:when>
       <xsl:when test="self::tei:bibl">
         <xsl:value-of select="ancestor-or-self::tei:entry[1]/@xml:id"/>
-        <xsl:text>_</xsl:text>
+        <xsl:text>_bibl</xsl:text>
         <xsl:number level="any" from="tei:entry" format="0001"/>
       </xsl:when>
       <xsl:when test="self::tei:cit">
         <xsl:value-of select="ancestor-or-self::tei:entry[1]/@xml:id"/>
-        <xsl:text>_</xsl:text>
+        <xsl:text>_cit</xsl:text>
         <xsl:number level="any" from="tei:entry" format="0001"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="ancestor-or-self::tei:entry[1]/@xml:id"/>
         <xsl:text>_</xsl:text>
+        <xsl:value-of select="local-name()"/>
         <xsl:number level="any" from="tei:entry" format="0001"/>
       </xsl:otherwise>
     </xsl:choose>
