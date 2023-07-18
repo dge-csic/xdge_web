@@ -21,6 +21,7 @@ class XdgeBuild
     static $idEntry = 1;
     /** SQL prepared queries */
     static $qEntry;
+    static $qEntrySearch;
     static $qBibl;
     static $qSearch;
     /** a translitteration table for latin chars */
@@ -86,7 +87,9 @@ class XdgeBuild
             inverso
         )
         VALUES (?,?,?,?,?,  ?,?,?,?,?);");
-        // self::$insSearch = self::$pdo->prepare("INSERT INTO search VALUES (?,?,?,?,?,?,?,?);");
+        self::$qEntrySearch = self::$pdo->prepare("
+        INSERT INTO entry_search(rowid, text) VALUES (?, ?);
+        ");
 
         self::$qBibl = self::$pdo->prepare("
         INSERT INTO bibl
@@ -144,7 +147,7 @@ class XdgeBuild
     static public function monoton($form)
     {
         $form = Normalizer::normalize($form, Normalizer::FORM_D);
-        $form = preg_replace('@\pM@u', "", $form);
+        $form = preg_replace('@\p{Mn}@u', "", $form);
         $form = mb_strtolower($form);
         return $form;
     }
@@ -182,20 +185,10 @@ class XdgeBuild
             $latin,
             $rev,
         ));
-        // echo $html;
         $rowid = self::$pdo->lastInsertId();
-        /*
-        self::$insSearch->execute(array(
-            $rowid,
-            $id,
-            $lemma,
-            self::xml($label, true),
-            "",
-            "entry",
-            $text,
-            trim(strtr($text, self::$grc_tr)),
-        ));
-        */
+        $text = Xt::detag($html);
+        $text = self::monoton($text);
+        self::$qEntrySearch->execute([$rowid, $text]);
     }
 
     /**

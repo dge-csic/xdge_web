@@ -20,6 +20,13 @@ CREATE INDEX entryMonoton   ON entry (monoton ASC, rowid ASC);
 CREATE INDEX entryLatin     ON entry (latin DESC);
 CREATE INDEX entryInverso   ON entry (inverso ASC, rowid ASC);
 
+CREATE VIRTUAL TABLE entry_search USING FTS5 (
+    -- table of searchable items
+    text, -- searchable text, lowercase without tags
+    tokenize = "unicode61 remove_diacritics 0"
+);
+
+
 CREATE TABLE inverso (
     -- table populated from entry in inverso order
     rowid               INTEGER, -- rowid auto

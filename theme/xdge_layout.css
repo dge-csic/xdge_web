@@ -1,5 +1,5 @@
 :root {
-    --left_width: 20rem;
+    --left_width: 15rem;
     --framing: 1.2rem;
 }
 
@@ -27,7 +27,7 @@
 
 @media (min-width: 2000px) {
     html {
-        font-size: 18pt;
+        font-size: 15pt;
     }
 }
 

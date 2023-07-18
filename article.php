@@ -11,22 +11,27 @@ use Oeuvres\Kit\{Http};
 class Article {
     /** requested form */
     public static $form;
-    /** article id recalled */
-    public static $lemma;
     /** articles */
     public static $res;
+    /** HTML title */
+    public static $title = '';
     /** init static paras */
     public static function init() {
         self::$form = Http::par('form');
         self::$res = Xdge::article(self::$form);
         // if no article found -> 404
         if (!self::$res) return false;
+        foreach(Article::$res as $row) {
+            self::$title .= $row['lemma'] . ', ';
+        }
+        self::$title .= 'DGE (Diccionario Griego-Español)'; 
+    
     }
 }
 Article::init();
 
 $title = function() {
-    // return $lenma . ", " . 'DGE (Diccionario Griego-Español)'; 
+    return Article::$title;
 };
 
 $main = function() {
@@ -49,6 +54,8 @@ $main = function() {
         echo "  </nav>\n";
         echo "</div>\n";
     }
+    // <script> not interpreted with innerHTML
+    echo "<style onload=\"document.title = '" . Article::$title . "'\"></style>\n";
 };
 
 // for debug, direct call

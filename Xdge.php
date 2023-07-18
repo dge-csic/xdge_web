@@ -92,12 +92,14 @@ in your parameter file<br/>
     static public function monoton($form)
     {
         $form = Normalizer::normalize($form, Normalizer::FORM_D);
-        $form = preg_replace( '@\pM@u', "", $form);
+        $form = preg_replace( '@\p{Mn}@u', "", $form);
         $form = mb_strtolower($form);
         return $form;
     }
 
-    /** For “Busqueda”, build a SQL WHERE clause from params */
+    /** 
+     * For “Busqueda”, build a SQL WHERE clause from params 
+     * */
     static public function sqlFrom()
     {
         $sql = " FROM search WHERE text MATCH ? ";
@@ -207,7 +209,7 @@ in your parameter file<br/>
         if ($count < 1) {
             return false;
         }
-        $query = self::$pdo->prepare('SELECT html, toc, prevnext, name, label FROM entry WHERE ' . $where);
+        $query = self::$pdo->prepare('SELECT * FROM entry WHERE ' . $where);
         $query->execute(array($form));
         $res = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
