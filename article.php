@@ -55,7 +55,7 @@ $main = function() {
     foreach(Article::$res as $row) {
         echo "<div class=\"entrywrap\">\n";
         // a search
-        $row['html'];
+        $reshi = null;
         if ($stmt) {
             $stmt->execute([$row['rowid'], $monoton]);
             $reshi = $stmt->fetch(PDO::FETCH_ASSOC);
