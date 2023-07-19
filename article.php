@@ -25,7 +25,6 @@ class Article {
             self::$title .= $row['lemma'] . ', ';
         }
         self::$title .= 'DGE (Diccionario Griego-Español)'; 
-    
     }
 }
 Article::init();
@@ -46,15 +45,31 @@ $main = function() {
         // not found ?
         return false;
     }
+    $stmt = null;
+    $q = Http::par('q', null);
+    if ($q) {
+        $monoton = Xdge::monoton($q);
+        $sql = "SELECT rowid, *, highlight(entry_search, 0, '<mark>', '</mark>') as hi FROM entry_search WHERE rowid = ? AND text MATCH ? LIMIT 1;";
+        $stmt = Xdge::$pdo->prepare($sql);
+    }
     foreach(Article::$res as $row) {
         echo "<div class=\"entrywrap\">\n";
+        // a search
+        $row['html'];
+        if ($stmt) {
+            $stmt->execute([$row['rowid'], $monoton]);
+            $reshi = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        if ($reshi) {
+            $row['html'] = Xdge::hilite($row['html'], $reshi['hi']);
+        }
         echo $row['html'];
         echo "  <nav class=\"toc\">\n";
         echo $row['toc'];
         echo "  </nav>\n";
         echo "</div>\n";
     }
-    // <script> not interpreted with innerHTML
+    // <script> not interpreted with innerHTML, a simple hack
     echo "<style onload=\"document.title = '" . Article::$title . "'\"></style>\n";
 };
 

@@ -3,3 +3,4 @@ pars.php
 sitemap.xml
 *.db-*
 /_*.php
+.htaccess

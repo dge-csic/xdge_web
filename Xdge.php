@@ -209,12 +209,39 @@ in your parameter file<br/>
         if ($count < 1) {
             return false;
         }
-        $query = self::$pdo->prepare('SELECT * FROM entry WHERE ' . $where);
+        $query = self::$pdo->prepare('SELECT *   FROM entry WHERE ' . $where);
         $query->execute(array($form));
         $res = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $res[] = $row;
         }
         return $res;
+    }
+
+    /**
+     * Hilite html with an FTS hilited text
+     */
+    static function hilite($html, $hi)
+    {
+        $marked = ''; // $html to generate
+        $html_pos = 0;
+        $hi_pos = 0;
+        while (true) {
+            $pos = mb_strpos($hi, "<mark>", $hi_pos);
+            if ($pos === false) break;
+            $marked .= mb_substr($html, $html_pos, $pos - $hi_pos);
+            $html_pos = $html_pos + $pos - $hi_pos;
+            $marked .= "<mark>";
+            $hi_pos = $pos + 6;
+            $pos = mb_strpos($hi, "</mark>", $hi_pos);
+            if ($pos === false) break;
+            $marked .= mb_substr($html, $html_pos, $pos - $hi_pos);
+            $html_pos = $html_pos + $pos - $hi_pos;
+            $marked .= "</mark>";
+            $hi_pos = $pos + 7;
+
+        }
+        $marked .=  mb_substr($html, $html_pos);
+        return $marked;
     }
 }

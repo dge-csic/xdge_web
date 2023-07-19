@@ -7,6 +7,9 @@ include_once(__DIR__ . '/vendor/autoload.php');
 use Psr\Log\{LogLevel};
 use Oeuvres\Kit\{Route, I18n, Http, Log, LoggerWeb};
 
+I18n::put([
+    'title' => 'DGE (Diccionario Griego-Español)',
+]);
 // no template
 Route::get(
     '/article/(.*)',
@@ -22,10 +25,10 @@ Route::template(__DIR__ . '/template.php');
 Route::get('/', __DIR__ . '/pages/presentacion.html');
 // try if a local html page is available
 Route::get('/(.*)', __DIR__ . '/pages/$1.html');
-
+// simple pages
 Route::get(
-    '/busqueda',
-    __DIR__ . '/busqueda.php',
+    '/(.*)',
+    __DIR__ . '/$1.php',
 );
 // try to have an article
 Route::get(

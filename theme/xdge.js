@@ -491,7 +491,7 @@ class Formajax {
     }, true);
     // onload, lemmas
     form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
-    // attach event to lemmas container
+    // click behavior on lemmas container
     lemmas.addEventListener('click', (e) => {
         let a = Formajax.selfOrAncestor(e.target, 'a');
         if (!a) return;
@@ -502,11 +502,21 @@ class Formajax {
         aSet.forEach((a) => {
             a.classList.remove('active');
         });
-        // load url
+        // propagate pars
+        const pars = new URLSearchParams(location.search);
         const lemma = a.getAttribute('href');
-        const url = 'article/' + lemma;
-        window.history.pushState({}, '', lemma);
-        Formajax.loadHtml(url, main, null, Tree.load);
+        const urlhist = new URL(lemma, window.location);
+        if (pars.get('q')) {
+            urlhist.searchParams.append("q", pars.get('q'));
+        }
+        window.history.pushState({}, '', urlhist);
+        // build url for article
+        let  urlart = new URL('article/' + lemma, window.location);
+        if (pars.get('q')) {
+            urlart.searchParams.append("q", pars.get('q'));
+        }
+        // stream maybe faster here
+        Formajax.loadHtml(urlart, main, null, Tree.load);
     });
     const indicar = document.getElementById('indicar');
     if (!indicar) return; // ??

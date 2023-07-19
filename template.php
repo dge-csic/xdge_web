@@ -51,9 +51,10 @@ $home_href = Route::home_href();
             </div>
             <div id="right">
             <div class="tabs">
+                <a href="busqueda">Búsqueda</a>
                 <a href="http://dge.cchs.csic.es/lst/lst4.htm" target="_new" title="Abreviaturas empleadas en el DGE">Abreviaturas</a>
                 <a href="http://dge.cchs.csic.es/lst/lst-int.htm" target="_new" title="Listas de ediciones de referencia y de abreviaturas empleadas en el DGE">Listas</a>
-                <a target="article" href="creditos" title="Créditos y agradecimientos">Créditos</a>
+                <a href="creditos" title="Créditos y agradecimientos">Créditos</a>
                 <div class="filler"></div>
             </div>
                 <main id="main">
