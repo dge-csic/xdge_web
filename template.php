@@ -41,8 +41,8 @@ $home_href = Route::home_href();
                     <a title="Lista de los lemas ordenados por su terminación" id="inverso" class="<?=($tab == 'inverso')?'active':''?>">Inverso</a>
                     <div class="filler"></div>
                 </div>
-                <form name="lemmas" action="lemmas.php">
-                    <input name="form" id="form"/>
+                <form name="lemmas" action="lemmas.php" autocomplete="off">
+                    <input name="form" id="form" autocomplete="off"/>
                     <input type="hidden" name="inverso"/>
                 </form>
                 <div id="lemmas" data-url="lemmas.php">

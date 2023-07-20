@@ -80,7 +80,9 @@
     <xsl:apply-templates select="
         .//tei:quote[@xml:lang='spa'] 
       | .//tei:quote[@xml:lang='grc'] 
-      | .//tei:def" mode="sql">
+      | .//tei:def 
+      | .//tei:usg
+      " mode="sql">
       <xsl:with-param name="entryname" select="@xml:id"/>
       <xsl:with-param name="entrylabel" select="$label"/>
     </xsl:apply-templates>
@@ -192,7 +194,16 @@
     </xsl:variable>
     <xsl:variable name="context">{$html}</xsl:variable>
     <xsl:variable name="html">
-      <xsl:apply-templates select="."/>
+      <dfn class="def">
+        <xsl:for-each select="node()">
+          <xsl:choose>
+            <xsl:when test="self::tei:hi"/>
+            <xsl:otherwise>
+              <xsl:apply-templates select="."/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+      </dfn>
     </xsl:variable>
     <xsl:if test="function-available('php:function')">
       <xsl:variable name="entry" select="php:function(
@@ -206,7 +217,41 @@
         )"/>
     </xsl:if>
   </xsl:template>
+
+  <xsl:template match="tei:usg" mode="sql">
+    <xsl:param name="entryname"/>
+    <xsl:param name="entrylabel"/>
+    <xsl:variable name="here" select="."/>
+    <xsl:variable name="name">
+      <xsl:apply-templates select="ancestor::tei:sense[1]" mode="id"/>
+    </xsl:variable>
+    <xsl:variable name="branch">
+      <div class="branch">
+        <xsl:copy-of select="$entrylabel"/>
+        <xsl:for-each select="ancestor-or-self::tei:sense[tei:num]">
+          <xsl:text> — </xsl:text>
+          <xsl:apply-templates select="." mode="title"/>
+        </xsl:for-each>
+      </div>
+    </xsl:variable>
+    <xsl:variable name="context">{$html}</xsl:variable>
+    <xsl:variable name="html">
+      <xsl:apply-templates select="."/>
+    </xsl:variable>
+    <xsl:if test="function-available('php:function')">
+      <xsl:variable name="entry" select="php:function(
+        'XdgeBuild::search', 
+        string('usg'), 
+        string($name),
+        exslt:node-set($html) ,
+        exslt:node-set($branch),
+        exslt:node-set($context),
+        string($entryname)
+        )"/>
+    </xsl:if>
+  </xsl:template>
   
+
   <xsl:template match="tei:bibl" mode="sql">
     <xsl:param name="entryname"/>
     <xsl:param name="entrylabel"/>
