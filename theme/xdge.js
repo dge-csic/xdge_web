@@ -555,6 +555,27 @@ class Formajax {
             });
         }
     });
+    // click search in grc will unclick search in spa, and opposite
+    const checkgrc = document.querySelectorAll("form #f1");
+    const checkspa = document.querySelectorAll("form #f2, form #f3, form #f4");
+    checkgrc.forEach((grc) => {
+        grc.addEventListener('click', (e) => {
+            // if click to uncheck do nothing
+            if (!grc.checked) return; 
+            checkspa.forEach((spa) => {
+                spa.checked = false;
+            });
+        });
+    });
+    checkspa.forEach((spa) => {
+        spa.addEventListener('click', (e) => {
+            // if click to uncheck do nothing
+            if (!spa.checked) return; 
+            checkgrc.forEach((grc) => {
+                grc.checked = false;
+            });
+        });
+    });
 
     indicar.addEventListener('click', (e) => {
         e.preventDefault();
