@@ -54,7 +54,7 @@ class Select
     }
     /** Add a value */
     function add(
-        bool $checked=false, 
+        bool $checked, 
         string $value, 
         ?string $label=null,
         ?string $title=null
