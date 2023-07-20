@@ -438,6 +438,11 @@ strong.lemma {
     font-weight: 370;
 }
 
+.def > i {
+    font-style: normal;
+    color: var(--text);
+}
+
 .title {
     font-style: italic;
 }

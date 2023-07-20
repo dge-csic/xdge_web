@@ -194,16 +194,7 @@
     </xsl:variable>
     <xsl:variable name="context">{$html}</xsl:variable>
     <xsl:variable name="html">
-      <dfn class="def">
-        <xsl:for-each select="node()">
-          <xsl:choose>
-            <xsl:when test="self::tei:hi"/>
-            <xsl:otherwise>
-              <xsl:apply-templates select="."/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:for-each>
-      </dfn>
+      <xsl:apply-templates select="."/>
     </xsl:variable>
     <xsl:if test="function-available('php:function')">
       <xsl:variable name="entry" select="php:function(
