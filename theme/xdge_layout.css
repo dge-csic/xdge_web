@@ -332,3 +332,7 @@ div.found {
     background-color: var(--bg);
     padding: 0 1rem;
 }
+
+form.busqueda {
+    padding: 1rem;
+}

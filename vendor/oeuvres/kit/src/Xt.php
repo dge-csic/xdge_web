@@ -290,7 +290,6 @@ class Xt
             ),
             // blanking a string, keeping new lines
             function ($matches) {
-                // unicode flag should keep size in chars (not in bytes)
                 return preg_replace("/[^\n]/u", " ", $matches[0]);
             },
             $html
