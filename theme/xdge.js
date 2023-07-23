@@ -465,16 +465,21 @@ class Formajax {
         }
         return chars.join('');
     }
-    const form = document.forms['lemmas'];
-    if (!form) return;
+    // url parameters of page
+    const pars = new URLSearchParams(location.search);
+
+    const sugerir = document.forms['sugerir'];
+    if (!sugerir) return;
+    const inverso = sugerir['inverso'];
+    const busqueda = document.forms['busqueda'];
     const lemmas = document.getElementById('lemmas');
     // no div to populate.
     if (!lemmas) return;
     const main = document.getElementById('main');
     if (!main) return;
-    form.addEventListener('submit', (e) => {
+    sugerir.addEventListener('submit', (e) => {
         e.preventDefault();
-        const url = form.action + "?" + Formajax.formQuery(form);
+        const url = sugerir.action + "?" + Formajax.formQuery(sugerir);
         Formajax.loadHtml(url, lemmas, null, (e) => {
             // scroll active into view onload
             const a = lemmas.querySelector("a.lemma.active");
@@ -485,12 +490,24 @@ class Formajax {
         return false;
     }, true);
     // send submit when suggest change
-    form.form.addEventListener('input', (e) => {
-        form.form.value = latGrc(form.form.value);
-        form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+    sugerir.form.addEventListener('input', (e) => {
+        sugerir.form.value = latGrc(sugerir.form.value);
+        sugerir.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
     }, true);
-    // onload, lemmas
-    form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+    // document onload, populate lemmas
+    // busqueda search, limit lemma to query result
+    if (pars.get('q')) {
+        const  url = new URL(sugerir.action);
+        url.searchParams.append("q", pars.get('q'));
+        pars.getAll('f').forEach((f) => {
+            url.searchParams.append("f", f);
+        });
+        Formajax.loadHtml(url, lemmas);
+    }
+    // default, 
+    else {
+        sugerir.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+    }
     // click behavior on lemmas container
     lemmas.addEventListener('click', (e) => {
         let a = Formajax.selfOrAncestor(e.target, 'a');
@@ -502,8 +519,6 @@ class Formajax {
         aSet.forEach((a) => {
             a.classList.remove('active');
         });
-        // propagate pars
-        const pars = new URLSearchParams(location.search);
         const lemma = a.getAttribute('href');
         const urlhist = new URL(lemma, window.location);
         if (pars.get('q')) {
@@ -518,10 +533,6 @@ class Formajax {
         // stream maybe faster here
         Formajax.loadHtml(urlart, main, null, Tree.load);
     });
-    const indicar = document.getElementById('indicar');
-    if (!indicar) return; // ??
-    const inverso = document.getElementById('inverso');
-    if (!inverso) return; // ??
     // infinite scroll of lemmas
     lemmas.addEventListener('scroll', function() {
         // bottom scroll
@@ -529,23 +540,30 @@ class Formajax {
             // get last rowid
             const last = lemmas.lastElementChild;
             if (!last) {
-                console.log("Error? Infinite scroll, no last a")
                 return;
             }
-            const url = new URL(form.action);
+            // infinite scroll not relevant, ex: query results
+            if (!last.dataset.rowid) {
+                return;
+            }
+            const rowid = Number(last.dataset.rowid);
+            const url = new URL(sugerir.action);
             if (inverso.value) {
                 url.searchParams.append("inverso", inverso.value);
             }
-            url.searchParams.append("id_start", Number(last.dataset.rowid) + 1);
+            url.searchParams.append("id_start", rowid + 1);
             Formajax.loadHtml(url, lemmas, 'beforeend');
         }
         if (lemmas.scrollTop <= 0) {
             const first = lemmas.firstElementChild;
             if (!first) {
-                console.log("Error? Infinite scroll, no first a")
                 return;
             }
-            const url = new URL(form.action);
+            // infinite scroll not relevant, ex: query results
+            if (!first.dataset.rowid) {
+                return;
+            }
+            const url = new URL(sugerir.action);
             if (inverso.value) {
                 url.searchParams.append("inverso", inverso.value);
             }
@@ -555,6 +573,64 @@ class Formajax {
             });
         }
     });
+    function tabing(e) {
+        const tab = e.currentTarget;
+        tab.parentNode.querySelectorAll('a').forEach((a) => {
+            a.classList.remove("active");
+        });
+        tab.classList.add("active");
+        e.preventDefault();
+    }
+
+    // events for tabs
+    let tab = null;
+    tab = document.getElementById('tab_indicar');
+    if (tab) tab.addEventListener('click', (e) => {
+        tabing(e);
+
+        busqueda.style.display = 'none';
+        sugerir.style.display = 'block';
+        sugerir.classList.remove("inverso");
+        lemmas.classList.remove("inverso");
+        sugerir.inverso.value = null;
+        // clean search params
+        const url = new URL (window.location);
+        url.search = '';
+        window.history.pushState({}, '', url);
+        sugerir.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+
+
+        return false;
+    });
+    tab = document.getElementById('tab_inverso');
+    if (tab) tab.addEventListener('click', (e) => {
+        tabing(e);
+
+        busqueda.style.display = 'none';
+        sugerir.style.display = 'block';
+        sugerir.classList.add("inverso");
+        lemmas.classList.add("inverso");
+        sugerir.inverso.value = true;
+        // clean search params
+        const url = new URL (window.location);
+        url.search = '';
+        window.history.pushState({}, '', url);
+        sugerir.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
+        return false;
+    });
+    tab = document.getElementById('tab_busqueda');
+    if (tab) tab.addEventListener('click', (e) => {
+        tabing(e);
+        busqueda.style.display = 'block';
+        sugerir.style.display = 'none';
+        lemmas.classList.remove("inverso");
+        lemmas.innerText = '';
+        return false;
+    });
+})();
+
+// init busqueda form
+(function () {
     // click search in grc will unclick search in spa, and opposite
     const checkgrc = document.querySelectorAll("form #f1");
     const checkspa = document.querySelectorAll("form #f2, form #f3, form #f4");
@@ -576,25 +652,5 @@ class Formajax {
             });
         });
     });
-
-    indicar.addEventListener('click', (e) => {
-        e.preventDefault();
-        inverso.classList.remove("active");
-        indicar.classList.add("active");
-        form.classList.remove("inverso");
-        lemmas.classList.remove("inverso");
-        form.inverso.value = null;
-        form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
-        return false;
-    });
-    inverso.addEventListener('click', (e) => {
-        e.preventDefault();
-        indicar.classList.remove("active");
-        inverso.classList.add("active");
-        form.classList.add("inverso");
-        lemmas.classList.add("inverso");
-        form.inverso.value = true;
-        form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
-        return false;
-    });
 })();
+

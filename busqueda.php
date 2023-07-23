@@ -12,21 +12,6 @@ ob_implicit_flush();
 while (ob_get_level()) ob_end_clean();
 
 $main = function() {
-    ?>
-    <form autocomplete="off" class="busqueda" name="busqueda" action="busqueda">
-        <h1>Búsqueda</h1>
-        <input autocomplete="off" name="q" value="<?= Http::par('q', '') ?>"/>
-<?php 
-$checkbox = new Select('f', Select::CHECKBOX);
-echo $checkbox
-    ->add(false, "quotegrc", "cita griega")
-    ->add(true, "def", "traducción de lema")
-    ->add(true, "quotespa", "traducción de cita")
-    ->add(true, "usg", "indicación de uso")
-;
-        ?>
-    </form>
-    <?php
     results();
 };
 

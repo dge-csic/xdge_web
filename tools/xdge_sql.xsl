@@ -63,10 +63,10 @@
     
     <xsl:if test="function-available('php:function')">
       <xsl:variable name="entry" select="php:function(
-        'XdgeBuild::entry', 
-        string(@xml:id), 
-        string($lemma),  
-        exslt:node-set($label) ,
+        'XdgeBuild::entry',
+        string(@xml:id),
+        string($lemma),
+        exslt:node-set($label),
         exslt:node-set($html),
         exslt:node-set($toc),
         exslt:node-set($prevnext),
@@ -127,8 +127,9 @@
           exslt:node-set($html) ,
           exslt:node-set($branch),
           exslt:node-set($context),
-          string($entryname)
-        )"/>
+          string($entryname),
+          exslt:node-set($entrylabel)
+       )"/>
     </xsl:if>
   </xsl:template>
 
@@ -171,7 +172,8 @@
         exslt:node-set($html) ,
         exslt:node-set($branch),
         exslt:node-set($context),
-        string($entryname)
+        string($entryname),
+        exslt:node-set($entrylabel)
         )"/>
     </xsl:if>
   </xsl:template>
@@ -204,7 +206,8 @@
         exslt:node-set($html) ,
         exslt:node-set($branch),
         exslt:node-set($context),
-        string($entryname)
+        string($entryname),
+        exslt:node-set($entrylabel)
         )"/>
     </xsl:if>
   </xsl:template>
@@ -237,7 +240,8 @@
         exslt:node-set($html) ,
         exslt:node-set($branch),
         exslt:node-set($context),
-        string($entryname)
+        string($entryname),
+        exslt:node-set($entrylabel)
         )"/>
     </xsl:if>
   </xsl:template>

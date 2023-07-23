@@ -100,7 +100,7 @@ class XdgeBuild
             title, 
             scope, 
             
-            entryname, 
+            entryname,
             entrylabel
         )
         VALUES (?,?,?,?,?,  ?,?);");
@@ -115,9 +115,10 @@ class XdgeBuild
             branch, 
             
             context, 
-            entryName
+            entryName,
+            entrylabel
         )
-        VALUES (?,?,?,?,?,  ?,?);");
+        VALUES (?,?,?,?,?,  ?,?,?);");
 
         $proc = new XSLTProcessor();
         $proc->registerPHPFunctions();
@@ -224,8 +225,9 @@ class XdgeBuild
         $name, 
         $html, 
         $branch, 
-        $context, 
-        $entryname
+        $context,
+        $entryname,
+        $entrylabel
     ) {
         $html = self::xml($html);
         $text = Xt::detag($html);
@@ -238,6 +240,7 @@ class XdgeBuild
             self::xml($branch),
             self::xml($context),
             $entryname,
+            self::xml($entrylabel, true),
         ));
     }
 

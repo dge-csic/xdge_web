@@ -39,7 +39,7 @@
     margin: 0;
     background-color: #FFFFFF;
     background-image: linear-gradient(to right, #FFFFFF, var(--bg_soft) 21.2rem, #353b90);
-    padding: var(--framing) var(--framing) 0 var(--framing);
+    padding: 0 var(--framing) 0 var(--framing);
     position: relative;
 }
 
@@ -49,11 +49,13 @@
     flex-grow: 0;
     flex-shrink: 0;
     position: relative;
+    height: calc(100vh - 6rem);
 }
 
 #left {
     display: flex;
     flex-direction: column;
+    height: 100%;
     width: var(--left_width);
     border-bottom: 1px var(--border) solid;
     position: relative;
@@ -64,7 +66,17 @@
     /* margin-top: -1px; */    
 }
 
-#form {
+div.input {
+    display: flex;
+}
+
+div.input button {
+    background: var(--bg);
+    border: none;
+    color: var(--border);
+}
+
+input[type=text] {
     /* suggest field */
     text-align: left;
     width: 100%;
@@ -76,7 +88,7 @@
     font-weight: 300;
 }
 
-.inverso #form {
+.inverso input[type=text] {
     text-align: right;
 }
 
@@ -86,6 +98,10 @@
 
 #lemmas.inverso {
     text-align: right;
+}
+
+form .checks {
+    padding: 1rem;
 }
 
 *::-webkit-scrollbar {
@@ -112,12 +128,12 @@
     /* lemmas suggestion */
     overflow-y: scroll;
     border-left: 1px var(--border) solid;
-    height: calc(100vh - 9.5rem);
+    height: 100%;
 }
 
 #main {
     width: 55rem;
-    height: calc(100vh - 7.3rem);
+    height: 100%;
     overflow: auto;
     position: relative;
     border-right: 1px var(--border) solid;
@@ -148,10 +164,8 @@ div.entrywrap > article {
 }
 
 #right {
+    height: 100%;
     flex-basis: 50em;
-}
-
-#right {
     display: flex;
     flex-direction: column;
     border-bottom: 1px var(--border) solid;
@@ -164,15 +178,18 @@ div.entrywrap > article {
 
 #header {
     position: relative;
-    height: 3rem;
+    height: 4rem;
+    padding: auto;
     flex-grow: 0;
     flex-shrink: 0;
 }
 
 .tabs {
     height: 1.5rem;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 1.5rem;
     display: flex;
-    /* font-size: 1; */
 }
 
 .tabs .filler {
@@ -198,6 +215,10 @@ div.entrywrap > article {
     /* margin-bottom: -1px; */
 }
 
+#right .tabs > * {
+    color: #fff;
+}
+
 .tabs a.active,
 .tabs a:hover {
     color: var(--rubric) !important;
@@ -207,14 +228,10 @@ div.entrywrap > article {
     border-right: 1px var(--border) solid;
 }
 
-#tabs-left a.active,
-#tabs-left a:hover {
+#left .tabs a.active,
+#left .tabs a:hover {
     background-color: var(--bg);
     border-bottom: 1px solid var(--bg);
-}
-
-#header .grad a {
-    color: #FFFFFF;
 }
 
 #footer {
@@ -245,6 +262,7 @@ div.entrywrap > article {
     position: absolute;
     right: 0;
     top: 0;
+    padding-top: 0.8rem;
     display: flex;
     color: #fff;
     font-size: 120%;
@@ -253,6 +271,9 @@ div.entrywrap > article {
 }
 
 #header>.left {
+    display: block;
+    height: 100%;
+    padding-top: 1.2rem;
     font-size: 120%;
     line-height: 100%;
     font-family: var(--serif);
@@ -333,6 +354,4 @@ div.found {
     padding: 0 1rem;
 }
 
-form.busqueda {
-    padding: 1rem;
-}
+

@@ -63,5 +63,6 @@ CREATE VIRTUAL TABLE search USING FTS5 (
     context    UNINDEXED, -- context in which insert hilited text
     entry      UNINDEXED, -- entry rowid
     entryname  UNINDEXED, -- entry/@xml:id
+    entrylabel UNINDEXED, -- displayable lemma
     tokenize = "unicode61 remove_diacritics 0"
 );

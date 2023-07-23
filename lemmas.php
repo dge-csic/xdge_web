@@ -12,11 +12,56 @@ $time_start = microtime(true);
  */
 
 use Oeuvres\Kit\{Http, Route};
+
+$form = Http::par('form', null);
+
+// case of query, show lemma from query
+$q = Http::par('q', '');
+if ($q) {
+    $fields = Http::pars('f');
+    if (count($fields)) {
+        $fts = '(type: "' . implode('" OR "', $fields) . '") AND (text: ' . Xdge::monoton($q) . ')';
+        // $q = implode('" OR "', $fields) ;
+    }
+    else {
+        $fts = $q;
+    }
+    $sql = "SELECT entryname, entrylabel, name FROM search WHERE search MATCH ?";
+    $stmt = Xdge::$pdo->prepare($sql);
+    $stmt->execute([$fts]);
+    $lastentry = null;
+    $html = null;
+    $count = 0;
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        // more than one result for entry
+        if ($lastentry == $row['entryname']) {
+            $count++;
+            continue;
+        }
+        // we could display count here, but too much surprises
+        if ($html) {
+            echo $html;
+            // echo " <small>($count)</small>"
+            echo "</a>\n";
+        }
+        $lastentry = $row['entryname'];
+        $count = 1;
+        $class = "";
+        // requested form ?
+        /*
+        if ($row['entryname'] == $form) {
+            $class = " active";
+        }
+        */
+        $html = "<a class=\"lemma$class\" href=\"{$row['entryname']}#{$row['name']}\">{$row['entrylabel']}";
+    }
+    return;
+}
+
 // allow caching on date of the database ?
 // Http::notModified(Xdge::$p['xdge_db']);
-
-$inverso = Http::par('inverso', null);
 $home_href = Route::home_href();
+$inverso = Http::par('inverso', null);
 
 $before = 10;
 $after = 90;
@@ -24,7 +69,6 @@ $after = 90;
 $id_start = 0;
 $id_end = $before + $after;
 $id_form = 0;
-$form = Http::par('form', null);
 if ($form) {
     if ($inverso) {
         $id_form = Xdge::inversoRowid($form);

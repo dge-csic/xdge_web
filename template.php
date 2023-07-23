@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 include_once(__DIR__ . '/vendor/autoload.php');
 
-use \Oeuvres\Kit\{Http, Route};
+use \Oeuvres\Kit\{Http, Route, Select};
 
+$home_href = Route::home_href();
+$q = Http::par('q', '');
 $form = Http::par('form', 'Α');
 $tab = Http::par("tab", "indicar", null, "tab");
-$home_href = Route::home_href();
+if ($q) $tab = 'busqueda';
 ?>
 <!DOCTYPE html>
 <html>
@@ -26,37 +28,65 @@ $home_href = Route::home_href();
 <body>
     <div id="win">
         <header id="header">
-            <div class="left">
-                <a target="_top" href="."><i>DGE</i> en línea</a>
-            </div>
-            <div class="right">
-                <a href="http://dge.cchs.csic.es/">Diccionario<br />Griego–Español</a>
-                <a href="http://dge.cchs.csic.es/"><img src="<?= Route::home_href() ?>theme/dge_64.png" /></a>
-            </div>
+            <a class="left" target="_top" href="."><i>DGE</i> en línea</a>
+            <a class="right" href="http://dge.cchs.csic.es/">
+                <span>Diccionario<br />Griego–Español</span>
+                <img src="<?= Route::home_href() ?>theme/dge_64.png" />
+            </a>
         </header>
         <div id="middle">
             <div id="left">
                 <div class="tabs">
-                    <a title="Lista alfabética de los lemas" id="indicar" class="<?=($tab != 'indicar')?'':'active'?>">Lemas</a>
-                    <a title="Lista de los lemas ordenados por su terminación" id="inverso" class="<?=($tab == 'inverso')?'active':''?>">Inverso</a>
+                    <a title="Lista alfabética de los lemas" id="tab_indicar" class="<?=($tab != 'indicar')?'':'active'?>">Lemas</a>
+                    <a title="Lista de los lemas ordenados por su terminación" id="tab_inverso" class="<?=($tab == 'inverso')?'active':''?>">Inverso</a>
+                    <a id="tab_busqueda" class="<?=($tab == 'busqueda')?'active':''?>">Búsqueda</a>
                     <div class="filler"></div>
                 </div>
-                <form name="lemmas" action="lemmas.php" autocomplete="off">
-                    <input name="form" id="form" autocomplete="off"/>
+                <form  
+                    id="sugerir" 
+                    name="sugerir" 
+                    style="<?= ($q)?'display:none':'' ?>" 
+                    action="lemmas.php" autocomplete="off"
+                >
+                    <div class="input">
+                        <input type="text" name="form" id="form" autocomplete="off"
+                    placeholder="palabra a buscar" 
+                    title="Para llegar a un artículo, escribir aquí el lema en Beta Code o Unicode. La lista se posiciona en el punto indicado."
+                    />
+                        <button type="submit">▶</button>
+                    </div>
                     <input type="hidden" name="inverso"/>
+                </form>
+                <form autocomplete="off" name="busqueda" action="busqueda" id="busqueda"  style="<?= ($q)?'':'display:none' ?>">
+                    <div class="input">
+                        <input type="text" name="q" autocomplete="off" 
+                        placeholder="palabra a buscar"
+                        value="<?= $q ?>"/>
+                        <button type="submit">▶</button>
+                    </div>
+                    <div class="checks">
+            <?php 
+            $checkbox = new Select('f', Select::CHECKBOX);
+            echo $checkbox
+                ->add(false, "quotegrc", "cita griega")
+                ->add(true, "def", "traducción de lema")
+                ->add(true, "quotespa", "traducción de cita")
+                ->add(true, "usg", "indicación de uso")
+            ;
+                    ?>
+                    </div>
                 </form>
                 <div id="lemmas" data-url="lemmas.php">
                     <!-- -->
                 </div>
             </div>
             <div id="right">
-            <div class="tabs">
-                <a href="busqueda">Búsqueda</a>
-                <a href="http://dge.cchs.csic.es/lst/lst4.htm" target="_new" title="Abreviaturas empleadas en el DGE">Abreviaturas</a>
-                <a href="http://dge.cchs.csic.es/lst/lst-int.htm" target="_new" title="Listas de ediciones de referencia y de abreviaturas empleadas en el DGE">Listas</a>
-                <a href="creditos" title="Créditos y agradecimientos">Créditos</a>
-                <div class="filler"></div>
-            </div>
+                <div class="tabs">
+                    <div class="filler"></div>
+                    <a href="http://dge.cchs.csic.es/lst/lst4.htm" target="_new" title="Abreviaturas empleadas en el DGE">Abreviaturas</a>
+                    <a href="http://dge.cchs.csic.es/lst/lst-int.htm" target="_new" title="Listas de ediciones de referencia y de abreviaturas empleadas en el DGE">Listas</a>
+                    <a href="creditos" title="Créditos y agradecimientos">Créditos</a>
+                </div>
                 <main id="main">
                     <?= Route::main() ?>
                 </main>
@@ -70,8 +100,7 @@ $home_href = Route::home_href();
         </footer>
     </div>
     <script>
-const form = document.forms['lemmas'];
-form.form.value = '<?= $form ?>';
+document.forms['sugerir'].form.value = '<?= $form ?>';
 /*
 form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
 */
