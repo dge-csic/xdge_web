@@ -91,6 +91,7 @@ var Tree = {
         for (var maxj = els.length, j = 0; j < maxj; j++) {
             Tree.treeprep(els[j]);
         }
+        // 
     },
 
     /**
@@ -154,8 +155,9 @@ var Tree = {
                 a = null;
             }
             if (!a) continue;
-            // now, check if item should be opened
 
+
+            // now, check if item should be opened
             target = a.getAttribute('href'); // should return unresolved URI like written in source file
             if (location.pathname != a.pathname) continue; // not same path, go away
             keep = true; // at least, correct path, but check if hash or query could be better
@@ -181,6 +183,15 @@ var Tree = {
         }
         // add a class for CSS to say this list is set (before display none things)
         ul.classList.add('treejs');
+        // ensure into view of hash target
+        do {
+            if (!location.hash) break;
+            const id = decodeURI(location.hash.substring(1));
+            const target = document.getElementById(id);
+            if (!target) break;
+            target.scrollIntoView({  block: "start" });
+        } while (false)
+
         // changing global class should have resized object
         // check if link is visible, if not, scroll to it
         /*
@@ -311,31 +322,6 @@ var Tree = {
             }
         }
     },
-    /**
-     * Hilite an anchor element, now replaced by the :target CSS selector
-     */
-    hash: function (id) {
-        // id maybe an Event
-        if (id && id.stopPropagation) id = null;
-        // if another element has been hilited
-        if (!this.window.anchorLast);
-        else {
-            this.window.anchorLast.className = this.window.anchorLast.className.replace(/ *mark */g, '');
-        }
-        if (!id) {
-            id = window.location.hash;
-            if (id.indexOf('#') != 0) return false;
-            id = id.substring(1);
-        }
-        var o = document.getElementById(id);
-        // if (!o) take from anchors array ?
-        if (!o) return false;
-        if (o.className.indexOf("mark") > -1) return false;
-        o.className += " mark";
-        this.window.anchorLast = o;
-        // here it's OK, but an event scroll the page to its right place after
-        return false;
-    }
 
     /**
      * Snchronyze scroll with toc

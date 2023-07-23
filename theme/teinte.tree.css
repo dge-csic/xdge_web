@@ -119,8 +119,8 @@ button.tree {
 
 @media print {
     .tree li {
-        margin-top: none;
-        margin-bottom: none;
+        margin-top: 0;
+        margin-bottom: 0;
         border: none;
     }
 }
