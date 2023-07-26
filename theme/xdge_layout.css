@@ -140,6 +140,7 @@ form .checks {
 }
 
 div.entrywrap {
+    padding: 0 0 0 1rem;
     position: relative;
     height: 100%; /* should be contained by #main */
     display: flex;
