@@ -39,8 +39,11 @@ menu.tree {
     list-style-image: none;
     list-style: none;
     padding: 0 0 1px 1.1em;
-    border-left: var(--tree-line) 1px dotted;
     position: relative;
+}
+
+.tree ul >li {
+    border-left: var(--tree-line) 1px dotted;
 }
 
 

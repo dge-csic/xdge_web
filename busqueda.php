@@ -23,31 +23,48 @@ function results()
         return;
     }
     echo "<article class=\"results\">\n";
-    $sql = "SELECT *, highlight(search, 0, '<mark>', '</mark>') as hi FROM search WHERE search MATCH ? LIMIT 1000";
-    $stmt = Xdge::$pdo->prepare($sql);
+    $where = " WHERE search MATCH ? LIMIT 1000";
 
     $fields = Http::pars('f');
     if (count($fields)) {
         $fts = '(type: "' . implode('" OR "', $fields) . '") AND (text: ' . Xdge::monoton($q) . ')';
-        // $q = implode('" OR "', $fields) ;
     }
     else {
         $fts = $q;
     }
-
+    // counting results
+    $stmt = Xdge::$pdo->prepare("SELECT COUNT(*) AS count FROM search " . $where);
     $stmt->execute([$fts]);
+    $max  = $stmt->fetchColumn();
+    if (!$max) {
+        echo "<h1>No se ha encontrado</h1>";
+        return;
+    }
+    echo "<h1>$max resultados</h1>";
+    $stmt->execute([$fts]);
+
+
+    $stmt = Xdge::$pdo->prepare(
+        "SELECT *, highlight(search, 0, '<mark>', '</mark>') as hi FROM search " . $where);
+     
+    $stmt->execute([$fts]);
+    $n = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $article = "<section class=\"hit\">\n";
+        $n++;
+        $article = '';
+        // $article .= "<section class=\"hit\">\n";
         $article .= "    <a class=\"hit\" href=\"{$row['entryname']}?q=$q#{$row['name']}\">\n";
+        $article .= "<small class=\"n\">$n.</small>";
         $article .= $row['branch'];
         // hilite the html conmponent
         $html = "<div class=\"found\">" 
             . Xdge::hilite($row['html'], $row['hi']) 
             . "</div>";
-        $article .= str_replace('{$html}', $html, $row['context']) . "\n";
+        $context = preg_replace('/({\$html})\s*\pP/u', '$1', $row['context']);
+        $article .= str_replace('{$html}', $html, $context) . "\n";
 
-        $article .= "</a>";
-        $article .= "</section>\n";
+        $article .= "    </a>";
+        // $article .= "</section>\n";
         print($article);
         flush();
     }

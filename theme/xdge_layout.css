@@ -325,6 +325,7 @@ article.results div.branch {
     font-size: 0.85rem;
     line-height: 1.05;
     font-weight: 300;
+    margin-bottom: 0.4rem;
 }
 
 div.branch dfn {
@@ -332,13 +333,14 @@ div.branch dfn {
     font-weight: inherit;
 }
 
-section.hit {
-    margin-bottom: 1.5rem;
-    padding: 0.5rem 1rem;
+a.hit {
+    display: block;
+    padding: 0.5rem 1rem 0.5rem 2rem;
     border: 2px solid transparent;
+    position: relative;
 }
 
-section.hit:hover {
+.hit:hover {
     border-color: #fff;
 }
 
@@ -348,6 +350,16 @@ a.hit {
     color: inherit;
 }
 
+.hit .lemma {
+    font-size: 1.2rem;
+    color: var(--rubric);
+}
+
+.hit .n {
+    position: absolute;
+    left: 0.3rem;
+    top: 0.75em;
+}
 
 div.found {
     background-color: var(--bg);
