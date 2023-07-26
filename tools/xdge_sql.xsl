@@ -64,6 +64,7 @@
     <xsl:if test="function-available('php:function')">
       <xsl:variable name="entry" select="php:function(
         'XdgeBuild::entry',
+        string($filename),
         string(@xml:id),
         string($lemma),
         exslt:node-set($label),

@@ -22,8 +22,8 @@ class Xdge
     );
     /** a translitteration table for latin chars */
     static $lat_tr;
-    /** a translitteration table for greek chars */
-    static $grc_tr;
+    /** a translitteration table for very special greek chars */
+    static $grcfix_tr;
     /** a translitteration table for betacode */
     static $lat_grc_tr;
     /** a translitteration table from simple greek to latin chars */
@@ -47,7 +47,7 @@ class Xdge
         self::$p = include($config_file);
         // load transliteration tables
         $dir = __DIR__ . '/json/';
-        self::$grc_tr = json_decode(file_get_contents($dir . 'grc.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$grcfix_tr = json_decode(file_get_contents($dir . 'grcfix.json'), true, 512, JSON_THROW_ON_ERROR);
         self::$lat_tr = json_decode(file_get_contents($dir . 'lat.json'), true, 512, JSON_THROW_ON_ERROR);
         self::$grc_lat_tr = json_decode(file_get_contents($dir . 'grc_lat.json'), true, 512, JSON_THROW_ON_ERROR);
         self::$lat_grc_tr = json_decode(file_get_contents($dir . 'lat_grc.json'), true, 512, JSON_THROW_ON_ERROR);
@@ -91,6 +91,8 @@ in your parameter file<br/>
      */
     static public function monoton($form)
     {
+        // for greek chars unknown from Normalizer
+        $form = strtr($form, self::$grcfix_tr);
         $form = Normalizer::normalize($form, Normalizer::FORM_D);
         $form = preg_replace( '@\p{Mn}@u', "", $form);
         $form = mb_strtolower($form);

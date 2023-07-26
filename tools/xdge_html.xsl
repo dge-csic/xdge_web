@@ -12,6 +12,8 @@ Transform XDGE in html.
 <xsl:transform exclude-result-prefixes="tei" extension-element-prefixes="exslt php date" version="1.1" xmlns="http://www.w3.org/1999/xhtml" xmlns:date="http://exslt.org/dates-and-times" xmlns:exslt="http://exslt.org/common" xmlns:php="http://php.net/xsl" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <!-- do not strip spaces -->
   <xsl:output encoding="UTF-8" indent="yes" method="xml" omit-xml-declaration="yes"/>
+  <!-- Filename -->
+  <xsl:param name="filename" select="/*/@xml:id"/>
   <!-- shared templates -->
   <xsl:param name="this">xdge_html.xsl</xsl:param>
   <!-- for direct transformation to get a relative link to css  -->
@@ -26,16 +28,6 @@ Transform XDGE in html.
   </xsl:param>
   <!-- folder for theme -->
   <xsl:param name="theme">../xdge_web/theme/</xsl:param>
-  <!-- Share the same html prolog -->
-  <xsl:template name="prolog">
-    <xsl:text disable-output-escaping="yes"><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">]]></xsl:text>
-    <xsl:comment>
-      <xsl:value-of select="$this"/>
-      <xsl:text> — </xsl:text>
-      <xsl:value-of select="$date"/>
-    </xsl:comment>
-  </xsl:template>
   <xsl:output doctype-public="html" encoding="UTF-8" indent="yes"/>
   <!-- Corps HTML -->
   <xsl:template match="tei:TEI">

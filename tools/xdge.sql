@@ -1,5 +1,6 @@
 CREATE TABLE entry (
     rowid               INTEGER, -- rowid auto
+    filename      TEXT NOT NULL, -- filename
     name   TEXT UNIQUE NOT NULL, -- entry/@xml:id
     lemma         TEXT NOT NULL, -- *Ἀhεριγος
     label         BLOB NOT NULL, -- *Ἀhεριγ<sup>u̯</sup>ος

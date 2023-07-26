@@ -66,8 +66,8 @@ $inverso = Http::par('inverso', null);
 $before = 10;
 $after = 90;
 
-$id_start = 0;
-$id_end = $before + $after;
+$id_start = Http::int('id_start', null);
+$id_end = Http::int('id_end', null);
 $id_form = 0;
 if ($form) {
     if ($inverso) {
@@ -84,17 +84,18 @@ if ($form) {
     $id_start = max(0, $id_form - $before);
     $id_end = $id_form + $after;
 }
+else if ($id_start !== null && $id_start >= 0) {
+    $id_form = null;
+    $id_end = $id_start + $before + $after;
+}
+else if ($id_end !== null && $id_end >= 0) {
+    $id_form = null;
+    $id_start = $id_end - $before - $after;
+}
 else {
-    $id_start = Http::int('id_start', null);
-    $id_end = Http::int('id_end', null);
-    if ($id_start !== null && $id_start >= 0) {
-        $id_form = null;
-        $id_end = $id_start + $before + $after;
-    }
-    else if ($id_end !== null && $id_end >= 0) {
-        $id_form = null;
-        $id_start = $id_end - $before - $after;
-    }
+    $id_form = null;
+    $id_start = 0;
+    $id_end = $before + $after;
 }
 
 // rowid should be the start index

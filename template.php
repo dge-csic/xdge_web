@@ -8,7 +8,7 @@ use \Oeuvres\Kit\{Http, Route, Select};
 
 $home_href = Route::home_href();
 $q = Http::par('q', '');
-$form = Http::par('form', 'Α');
+$form = Http::par('form', '');
 $tab = Http::par("tab", "indicar", null, "tab");
 if ($q) $tab = 'busqueda';
 ?>
@@ -47,11 +47,12 @@ if ($q) $tab = 'busqueda';
                     name="sugerir" 
                     style="<?= ($q)?'display:none':'' ?>" 
                     action="lemmas.php" autocomplete="off"
+                    title="Para llegar a un artículo, escribir aquí el lema en Beta Code o Unicode. La lista se posiciona en el punto indicado."
                 >
                     <div class="input">
                         <input type="text" name="form" id="form" autocomplete="off"
                     placeholder="palabra a buscar" 
-                    title="Para llegar a un artículo, escribir aquí el lema en Beta Code o Unicode. La lista se posiciona en el punto indicado."
+                    value="<?= $form ?>"
                     />
                         <button type="submit">▶</button>
                     </div>
@@ -61,7 +62,8 @@ if ($q) $tab = 'busqueda';
                     <div class="input">
                         <input type="text" name="q" autocomplete="off" 
                         placeholder="palabra a buscar"
-                        value="<?= $q ?>"/>
+                        value="<?= $q ?>"
+                        />
                         <button type="submit">▶</button>
                     </div>
                     <div class="checks">
@@ -99,12 +101,7 @@ if ($q) $tab = 'busqueda';
             <div>
         </footer>
     </div>
-    <script>
-document.forms['sugerir'].form.value = '<?= $form ?>';
-/*
-form.dispatchEvent(new Event('submit', { "bubbles": true, "cancelable": true }));
-*/
-    </script>
+
     <script src="<?= Route::home_href() ?>theme/xdge.js">//</script>
     <script type="text/javascript" charset="utf-8" src="<?= Route::home_href() ?>theme/teinte.tree.js">//</script>
 </body>

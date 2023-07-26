@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'd3731e5ca55ef7cb5bd4d41bc59f9bc8529d73bf',
+        'reference' => '6f4ae83071f4b5cb3ee04e5e5308da66d37e84f5',
         'name' => 'dge-csic/xdge_web',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'd3731e5ca55ef7cb5bd4d41bc59f9bc8529d73bf',
+            'reference' => '6f4ae83071f4b5cb3ee04e5e5308da66d37e84f5',
             'dev_requirement' => false,
         ),
         'oeuvres/kit' => array(
