@@ -1,6 +1,8 @@
 # https://www.aleksandrhovhannisyan.com/blog/crlf-vs-lf-normalizing-line-endings-in-git/
+# git ls-files --eol
 
 * text=auto
+
 
 *.css text
 *.csv text
