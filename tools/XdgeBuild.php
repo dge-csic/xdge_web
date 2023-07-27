@@ -5,13 +5,6 @@ include_once(__DIR__ . '/../vendor/autoload.php');
 
 use \Oeuvres\Kit\{Xt};
 
-/**
- * Global pilot of xdge app
- */
-XdgeBuild::build(
-    dirname(__DIR__) . '/xdge.db',
-    dirname(dirname(__DIR__)) . '/xdge_xml/xdge*.xml'
-);
 
 class XdgeBuild
 {
@@ -37,6 +30,19 @@ class XdgeBuild
     /** a transliterration table to convert modern accentued greek in ancient  */
     static $el_grc_tr;
 
+    static function init()
+    {
+        // load transliteration tables
+        $dir = dirname(__DIR__) . '/json/';
+        self::$grcfix_tr = json_decode(file_get_contents($dir . 'grcfix.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$lat_tr = json_decode(file_get_contents($dir . 'lat.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$grc_lat_tr = json_decode(file_get_contents($dir . 'grc_lat.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$lat_grc_tr = json_decode(file_get_contents($dir . 'lat_grc.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$orth_tr = json_decode(file_get_contents($dir . 'orth.json'), true, 512, JSON_THROW_ON_ERROR);
+        self::$el_grc_tr = json_decode(file_get_contents($dir . 'el_grc.json'), true, 512, JSON_THROW_ON_ERROR);
+
+    }
+
     /** create new database */
     static function build($sqlite_file, $xml_glob)
     {
@@ -49,14 +55,6 @@ class XdgeBuild
         self::$pdo = self::connect($sqlite_file);
         $sql = file_get_contents(__DIR__ . "/xdge.sql");
         self::$pdo->exec($sql);
-        // load transliteration tables
-        $dir = dirname(__DIR__) . '/json/';
-        self::$grcfix_tr = json_decode(file_get_contents($dir . 'grcfix.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$lat_tr = json_decode(file_get_contents($dir . 'lat.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$grc_lat_tr = json_decode(file_get_contents($dir . 'grc_lat.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$lat_grc_tr = json_decode(file_get_contents($dir . 'lat_grc.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$orth_tr = json_decode(file_get_contents($dir . 'orth.json'), true, 512, JSON_THROW_ON_ERROR);
-        self::$el_grc_tr = json_decode(file_get_contents($dir . 'el_grc.json'), true, 512, JSON_THROW_ON_ERROR);
         self::load($xml_glob);
     }
     /** Connexion */
@@ -256,12 +254,21 @@ class XdgeBuild
         $xml = '';
         if (!is_array($nodeset)) $nodeset = array($nodeset);
         foreach ($nodeset as $doc) {
+            if($doc->firstChild === null) {
+                continue;
+            }
+            if (get_class($doc->firstChild) === 'DOMText') {
+                $xml .= $doc->textContent;
+                continue;
+            }
+            // if (!$doc->textContent) // not seen after upper
             $doc->formatOutput = true;
             $doc->substituteEntities = true;
             $doc->encoding = "UTF-8";
             $doc->normalize();
             $xml .= $doc->saveXML($doc->documentElement);
         }
+        if (!$xml) return null;
         // del root ns
         $xml = preg_replace('@ xmlns="http://www.w3.org/1999/xhtml"@', '', $xml);
         // cut the root element
@@ -272,3 +279,11 @@ class XdgeBuild
         return $xml;
     }
 }
+XdgeBuild::init();
+/**
+ * Global pilot of xdge app
+ */
+XdgeBuild::build(
+    dirname(__DIR__) . '/xdge.db',
+    dirname(dirname(__DIR__)) . '/xdge_xml/xdge*.xml'
+);

@@ -53,17 +53,17 @@ function results()
         $n++;
         $article = '';
         // $article .= "<section class=\"hit\">\n";
-        $article .= "    <a class=\"hit\" href=\"{$row['entryname']}?q=$q#{$row['name']}\">\n";
-        $article .= "<small class=\"n\">$n.</small>";
-        $article .= $row['branch'];
+        $article .= "<a class=\"hit\" href=\"{$row['entryname']}?q=$q#{$row['name']}\">\n";
+        $article .= "    <small class=\"n\">$n.</small>\n";
+        $article .= "    " . $row['branch'] . "\n";
         // hilite the html conmponent
         $html = "<div class=\"found\">" 
             . Xdge::hilite($row['html'], $row['hi']) 
-            . "</div>";
+            . "</div>\n";
         $context = preg_replace('/({\$html})\s*\pP/u', '$1', $row['context']);
-        $article .= str_replace('{$html}', $html, $context) . "\n";
+        $article .= "    " . str_replace('{$html}', $html, $context) . "\n";
 
-        $article .= "    </a>";
+        $article .= "</a>\n\n";
         // $article .= "</section>\n";
         print($article);
         flush();
