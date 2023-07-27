@@ -403,7 +403,9 @@ header>div.form1 {
 }
 
 q[lang="spa"] i {
-    font-stretch: semi-condensed;
+    /* font-stretch: semi-condensed; */
+    color: var(--text);
+    font-style: normal;
 }
 
 a.ref {

@@ -161,9 +161,10 @@ class XdgeBuild
         $txt = self::xml($txt, true);
         // NO modern-old greek translit, XML should be good
         $lemma = trim($lemma);
+        // punctuation and other oddities
         $form = strtr($lemma, self::$orth_tr);
-        // normalize lemma for access, punctuation and diacritics
-        $monoton = self::monoton($form);
+        // normalize lemma for access, trim is needed
+        $monoton = trim(self::monoton($form));
         $latin = strtr($monoton, self::$grc_lat_tr);
         // strrev() or str_split() are not UTF-8 OK
         $rev = implode(array_reverse(preg_split('//u', $monoton, -1, PREG_SPLIT_NO_EMPTY)));
